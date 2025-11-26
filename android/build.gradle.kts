@@ -22,7 +22,6 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
-dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4");
-}
+
+
 
