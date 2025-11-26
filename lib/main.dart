@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-void main() {
+late SharedPreferences sharedPreferences;
+late FlutterSecureStorage storage;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  AndroidOptions getAndroidOptions() =>
+      const AndroidOptions(encryptedSharedPreferences: true);
+
+  storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+  sharedPreferences = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
