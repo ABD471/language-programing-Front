@@ -50,6 +50,9 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   google_fonts: ^6.3.2
   animated_search_bar: ^2.8.0
+  carousel_slider: ^5.1.1
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
   # flutter_local_notifications: ^19.5.0
 
 dev_dependencies:
