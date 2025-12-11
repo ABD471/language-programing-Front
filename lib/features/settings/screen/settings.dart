@@ -1,8 +1,13 @@
 import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
+import 'package:apartment_rental_system/features/settings/controller/settingsController.dart';
+import 'package:apartment_rental_system/features/settings/widget/sectionTitle.dart';
+import 'package:apartment_rental_system/features/settings/widget/settingsTile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  SettingsScreen({super.key});
+  final SettingsControllerImpl controller = Get.put(SettingsControllerImpl());
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +15,7 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("الإعدادات"),
+        title: Text("settings".tr),
         centerTitle: true,
         backgroundColor: theme.primaryColor,
         elevation: 3,
@@ -20,68 +25,79 @@ class SettingsScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _sectionTitle("الملف الشخصي"),
-            _settingsTile(Icons.person, "تعديل البيانات الشخصية"),
-            _settingsTile(Icons.phone, "تغيير رقم الهاتف"),
-            _settingsTile(Icons.email, "تغيير البريد الإلكتروني"),
+            sectionTitle("profile".tr),
+            settingsTile(
+              Icons.person,
+              "edit_profile".tr,
+              onTap: () {
+                controller.updateProfile(context);
+              },
+            ),
+            settingsTile(
+              Icons.phone,
+              "change_phone".tr,
+              onTap: () {
+                controller.changePhoneNumber();
+              },
+            ),
+            settingsTile(
+              Icons.email,
+              "change_email".tr,
+              onTap: () {
+                controller.changeEmail();
+              },
+            ),
             const SizedBox(height: 20),
-            _sectionTitle("الأمان"),
-            _settingsTile(Icons.lock, "تغيير كلمة المرور"),
-            _settingsTile(Icons.security, "التحقق بخطوتين"),
+            sectionTitle("security".tr),
+            settingsTile(
+              Icons.lock,
+              "change_password".tr,
+              onTap: () {
+                controller.changePassword();
+              },
+            ),
+            settingsTile(
+              Icons.security,
+              "two_step_verification".tr,
+              onTap: () {},
+            ),
             const SizedBox(height: 20),
-            _sectionTitle("التطبيق"),
-            _settingsTile(Icons.language, "اللغة"),
-            _settingsTile(Icons.dark_mode, "الوضع الليلي"),
-            _settingsTile(Icons.notifications, "الإشعارات"),
+            sectionTitle("app".tr),
+            settingsTile(
+              Icons.language,
+              "language".tr,
+              onTap: () {
+                controller.onTapLanguageSettings();
+              },
+            ),
+            settingsTile(
+              Icons.dark_mode,
+              "dark_mode".tr,
+              onTap: () {
+                controller.onTapModeSettings();
+              },
+            ),
+            settingsTile(
+              Icons.notifications,
+              "notifications".tr,
+              onTap: () {
+                controller.onTapNotificationSettings();
+              },
+            ),
             const SizedBox(height: 20),
-            _sectionTitle("عام"),
-            _settingsTile(Icons.help_center, "مركز المساعدة"),
-            _settingsTile(Icons.privacy_tip, "سياسة الخصوصية"),
-            _settingsTile(
+            sectionTitle("general".tr),
+            settingsTile(Icons.help_center, "help_center".tr, onTap: () {}),
+            settingsTile(Icons.privacy_tip, "privacy_policy".tr, onTap: () {}),
+            settingsTile(
               Icons.logout,
-              "تسجيل خروج",
+              "logout".tr,
               color: Colors.red,
               onTap: () {
-                // logout();
+                controller.onTapLogout();
               },
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _settingsTile(
-    IconData icon,
-    String title, {
-    Color? color,
-    void Function()? onTap,
-  }) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ListTile(
-        leading: Icon(icon, color: color ?? Colors.black87),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-        onTap: () {
-          onTap!();
-        },
       ),
     );
   }

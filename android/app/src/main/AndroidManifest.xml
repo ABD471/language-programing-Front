@@ -1,8 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<queries>
+  <!-- إذا كنت تريد التحقق من دعم SMS -->
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="sms" />
+  </intent>
+
+  <!-- إذا كنت تريد التحقق من دعم المكالمات -->
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="tel" />
+  </intent>
+
+  <!-- إذا كنت تستخدم inAppBrowserView أو Custom Tabs -->
+  <intent>
+    <action android:name="android.support.customtabs.action.CustomTabsService" />
+  </intent>
+</queries>
+<uses-permission android:name="android.permission.CALL_PHONE" />
+ uses-permission android:name="android.permission.CALL_PHONE"
     <application
-        android:label="apartment_rental_system"
+        android:label="Dream House"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
+       
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

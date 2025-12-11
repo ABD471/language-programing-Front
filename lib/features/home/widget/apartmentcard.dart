@@ -45,7 +45,7 @@ class ApartmentCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Image.network(
-                    apartment.imageUrl,
+                    apartment.imageUrl!,
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -89,7 +89,7 @@ class ApartmentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    apartment.title,
+                    apartment.title!,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -105,12 +105,12 @@ class ApartmentCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        apartment.city,
+                        apartment.city!,
                         style: const TextStyle(color: Colors.grey),
                       ),
                       const Spacer(),
                       Text(
-                        '${apartment.price.toStringAsFixed(0)} ل.س',
+                        '${apartment.price?.toStringAsFixed(0)} ل.س',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
