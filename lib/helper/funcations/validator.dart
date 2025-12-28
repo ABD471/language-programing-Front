@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 String? myValidator(String? val, min, max, type) {
   if (val!.isEmpty) {
-    return "15".tr;
+    return "empty".tr;
   }
 
   if (type == "email") {
@@ -17,16 +17,16 @@ String? myValidator(String? val, min, max, type) {
   }
   if (type == "phone") {
     if (val.length < 10) {
-      return "17".tr;
+      return "format".tr;
     }
   }
   if (type == "password") {
     if (val.length < min) {
-      return "${"18".tr} $min";
+      return "${"passwordmin".tr} $min";
     }
 
     if (val.length > max) {
-      return "${"19".tr}$max";
+      return "${"passwordmax".tr}$max";
     }
   }
   return null;

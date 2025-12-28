@@ -1,6 +1,6 @@
-import 'package:apartment_rental_system/features/apartmetdetails/controller/apartmentDetailsController.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
+import 'package:apartment_rental_system/testuils/contreeelrer.dart';
 import 'package:get/get.dart';
-
 
 class ApartmentDetailsBinding extends Bindings {
   @override
@@ -12,6 +12,6 @@ class ApartmentDetailsBinding extends Bindings {
       throw Exception('Apartment model must be passed via Get.arguments');
     }
     // apartment should be the correct type
-    Get.lazyPut(() => ApartmentDetailsController(args));
+    Get.lazyPut(() => ApartmentDetailsControllerTest(args));
   }
 }

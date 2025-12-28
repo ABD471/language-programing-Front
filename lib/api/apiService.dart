@@ -1,110 +1,77 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 import 'package:apartment_rental_system/api/urlClient.dart';
-import 'package:apartment_rental_system/main.dart';
+import 'package:apartment_rental_system/helper/const/requestType.dart';
+
+import 'package:apartment_rental_system/util/service/authservice.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-Duration timeout = const Duration(seconds: 40);
-
 class ApiService {
+  // ================== HEADERS ==================
+  static Map<String, String> _headers({bool useAuth = false}) {
+    return {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      if (useAuth && AuthService.token != null)
+        "Authorization": "Bearer ${AuthService.token}",
+    };
+  }
+
+  // ================== POST ==================
   static Future<Map<String, dynamic>> postRequest({
     required String url,
     Map<String, dynamic>? payload,
     bool useAuth = false,
+    RequestType type = RequestType.normal,
   }) async {
     try {
-      // جلب التوكن إذا لزم الأمر
-      String? token;
-      if (useAuth) {
-        token = "1|pC2jJqNY1vvVNVUuq3nh7CXqFEKtyxCvIhEhdetcb95afab1";
-        // token = await storage.read(key: "token");
-        if (token == null) throw Exception("token_not_found".tr);
-      }
-
       final response = await http
           .post(
             Uri.parse(url),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              if (useAuth) "Authorization": "Bearer $token",
-            },
-            body: jsonEncode(payload),
+            headers: _headers(useAuth: useAuth),
+            body: jsonEncode(payload ?? {}),
           )
-          .timeout(timeout);
+          .timeout(getTimeout(type));
 
-      debugPrint("STATUS: ${response.statusCode}");
-      debugPrint("BODY: ${response.body}");
-
-      // التعامل مع JSON أو نص عادي
-      dynamic body;
-      try {
-        body = jsonDecode(response.body);
-      } catch (_) {
-        body = response.body;
-      }
-
-      return {"statusCode": response.statusCode, "body": body};
+      return _handleResponse(response);
     } on SocketException {
       throw Exception("no_internet".tr);
     } on TimeoutException {
       throw Exception("timeout".tr);
     } catch (e) {
-      debugPrint("ERROR: $e");
+      debugPrint("POST ERROR: $e");
       throw Exception("unexpected_error".tr);
     }
   }
 
+  // ================== GET ==================
   static Future<Map<String, dynamic>> getRequest({
     required String url,
-
     bool useAuth = false,
+    RequestType type = RequestType.normal,
   }) async {
     try {
-      // جلب التوكن إذا لزم الأمر
-      String? token;
-      if (useAuth) {
-        token = "1|pC2jJqNY1vvVNVUuq3nh7CXqFEKtyxCvIhEhdetcb95afab1";
-        // token = await storage.read(key: "token");
-        //  if (token == null) throw Exception("token_not_found".tr);
-      }
-
       final response = await http
-          .get(
-            Uri.parse(url),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              if (useAuth) "Authorization": "Bearer $token",
-            },
-          )
-          .timeout(timeout);
+          .get(Uri.parse(url), headers: _headers(useAuth: useAuth))
+          .timeout(getTimeout(type));
 
-      debugPrint("STATUS: ${response.statusCode}");
-      debugPrint("BODY: ${response.body}");
-
-      // التعامل مع JSON أو نص عادي
-      dynamic body;
-      try {
-        body = jsonDecode(response.body);
-      } catch (_) {
-        body = response.body;
-      }
-
-      return {"statusCode": response.statusCode, "body": body};
+      return _handleResponse(response);
     } on SocketException {
       throw Exception("no_internet".tr);
     } on TimeoutException {
       throw Exception("timeout".tr);
     } catch (e) {
-      debugPrint("ERROR: $e");
+      debugPrint("GET ERROR: $e");
       throw Exception("unexpected_error".tr);
     }
   }
 
+  // ================== MULTIPART ==================
   static Future<Map<String, dynamic>> postMultipartRequest({
     required String url,
     required Map<String, String> fields,
@@ -112,73 +79,121 @@ class ApiService {
     bool useAuth = false,
   }) async {
     try {
-      // جلب التوكن
-      String? token;
-      if (useAuth) {
-        token = "1|pC2jJqNY1vvVNVUuq3nh7CXqFEKtyxCvIhEhdetcb95afab1";
-        //token = await storage.read(key: "token");
-        //  if (token == null) throw Exception("token_not_found".tr);
-      }
+      final request = http.MultipartRequest("POST", Uri.parse(url));
 
-      var request = http.MultipartRequest("POST", Uri.parse(url));
-
-      // الهيدر
       request.headers.addAll({
         "Accept": "application/json",
-        if (useAuth) "Authorization": "Bearer $token",
+        if (useAuth && AuthService.token != null)
+          "Authorization": "Bearer ${AuthService.token}",
       });
 
-      // إضافة الحقول العادية
       request.fields.addAll(fields);
 
-      // إضافة الملفات (الصور)
       if (files != null) {
-        files.forEach((key, file) async {
-          request.files.add(await http.MultipartFile.fromPath(key, file.path));
-        });
+        for (final entry in files.entries) {
+          request.files.add(
+            await http.MultipartFile.fromPath(entry.key, entry.value.path),
+          );
+        }
       }
 
-      // إرسال الطلب
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
+      final streamed = await request.send().timeout(
+        getTimeout(RequestType.upload),
+      );
 
-      debugPrint("STATUS: ${response.statusCode}");
-      debugPrint("BODY: ${response.body}");
+      final response = await http.Response.fromStream(streamed);
 
-      dynamic body;
-      try {
-        body = jsonDecode(response.body);
-      } catch (_) {
-        body = response.body;
-      }
-
-      return {"statusCode": response.statusCode, "body": body};
+      return _handleResponse(response);
+    } on SocketException {
+      throw Exception("no_internet".tr);
+    } on TimeoutException {
+      throw Exception("timeout".tr);
     } catch (e) {
-      debugPrint("ERROR: $e");
+      debugPrint("MULTIPART ERROR: $e");
       throw Exception("unexpected_error".tr);
     }
   }
 
-  static Future<Uint8List?> downloadImage(String type) async {
-    try {
-      final url = Uri.parse(urlClient["getpictureProfile"]!);
-      // final token = await ApiService.getToken(); // إذا عندك توكن
-      final token = "1|pC2jJqNY1vvVNVUuq3nh7CXqFEKtyxCvIhEhdetcb95afab1";
-      final response = await http.post(
-        url,
-        headers: {"Authorization": "Bearer $token", "Accept": "*/*"},
-        body: {"type": type},
-      );
+  // ================== DOWNLOAD ==================
 
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      } else {
-        print("Error status: ${response.statusCode}");
-        return null;
-      }
+  static Future<Uint8List?> downloadImage({
+    required String url,
+    Map<String, dynamic>? payload,
+  }) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse(urlClient[url]!),
+            headers: {
+              "Accept": "*/*",
+              if (AuthService.token != null)
+                "Authorization": "Bearer ${AuthService.token}",
+            },
+            body: payload,
+          )
+          .timeout(getTimeout(RequestType.download));
+
+      return response.statusCode == 200 ? response.bodyBytes : null;
     } catch (e) {
-      print("Error downloading image: $e");
+      debugPrint("DOWNLOAD ERROR: $e");
       return null;
+    }
+  }
+
+  // ================== DELETE ==================
+  static Future<Map<String, dynamic>> deleteRequest({
+    required String url,
+    Map<String, dynamic>? payload,
+    bool useAuth = false,
+    RequestType type = RequestType.normal,
+  }) async {
+    try {
+      final response = await http
+          .delete(
+            Uri.parse(url),
+            headers: _headers(useAuth: useAuth),
+            body: payload != null ? jsonEncode(payload) : null,
+          )
+          .timeout(getTimeout(type));
+      final body = response.body;
+      print("response :$body ");
+      return _handleResponse(response);
+    } on SocketException {
+      throw Exception("no_internet".tr);
+    } on TimeoutException {
+      throw Exception("timeout".tr);
+    } catch (e) {
+      debugPrint("DELETE ERROR: $e");
+      throw Exception("unexpected_error".tr);
+    }
+  }
+
+  // ================== RESPONSE HANDLER ==================
+  static Map<String, dynamic> _handleResponse(http.Response response) {
+    debugPrint("STATUS: ${response.statusCode}");
+    debugPrint("BODY: ${response.body}");
+
+    dynamic body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {
+      body = response.body;
+    }
+
+    return {"statusCode": response.statusCode, "body": body};
+  }
+
+  static Duration getTimeout(RequestType type) {
+    switch (type) {
+      case RequestType.splash:
+        return const Duration(seconds: 3);
+      case RequestType.upload:
+        return const Duration(seconds: 30);
+      case RequestType.download:
+        return const Duration(seconds: 55);
+      case RequestType.normal:
+      default:
+        return const Duration(seconds: 50);
     }
   }
 }

@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class Costumfiledtext extends StatefulWidget {
   final String hintText;
   final String label;
-  final Widget IconData;
-  final Widget? hide;
+  final Widget prefixIcon;
+  final Widget? suffixIcon;
   final FocusNode? focusNode;
   final bool obscureText;
   final TextEditingController Mycontroller;
   final String? Function(String?) validator;
-  TextInputType? keyboardType;
+  final TextInputType? keyboardType;
 
-  Costumfiledtext({
+  const Costumfiledtext({
     super.key,
-    this.keyboardType,
     required this.hintText,
     required this.Mycontroller,
     required this.validator,
     required this.label,
-    required this.IconData,
+    required this.prefixIcon,
     required this.obscureText,
-    this.hide,
+    this.suffixIcon,
     this.focusNode,
+    this.keyboardType,
   });
 
   @override
@@ -37,16 +38,15 @@ class _CostumfiledtextState extends State<Costumfiledtext>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
 
     _offsetAnimation = TweenSequence([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 10.0, end: -10.0), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 10.0, end: 0.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -8.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -8.0, end: 8.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: 8.0, end: -8.0), weight: 2),
+      TweenSequenceItem(tween: Tween(begin: -8.0, end: 0.0), weight: 1),
     ]).animate(_controller);
   }
 
@@ -57,8 +57,7 @@ class _CostumfiledtextState extends State<Costumfiledtext>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    final tt = theme.textTheme;
+    final textTheme = theme.textTheme;
 
     return AnimatedBuilder(
       animation: _offsetAnimation,
@@ -68,36 +67,44 @@ class _CostumfiledtextState extends State<Costumfiledtext>
           child: TextFormField(
             controller: widget.Mycontroller,
             obscureText: widget.obscureText,
-            style: tt.bodyMedium,
             keyboardType: widget.keyboardType,
+            focusNode: widget.focusNode,
+
+            // تطبيق الثيم على النص
+            style: textTheme.bodyLarge?.copyWith(fontSize: 15.sp),
+
             validator: (value) {
               final result = widget.validator(value);
-              if (result != null) shake(); // يهتز عند الخطأ
+              if (result != null) shake();
               return result;
             },
+
             decoration: InputDecoration(
-              labelText: widget.label,
-              hintText: widget.hintText,
-              prefixIcon: IconTheme(
-                data: IconThemeData(color: theme.colorScheme.primary),
-                child: widget.IconData,
-              ),
-              suffixIcon: widget.hide,
-              floatingLabelStyle: tt.bodyMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-              errorStyle: tt.bodySmall?.copyWith(color: Colors.yellow),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.yellow, width: 1.5),
+                borderRadius: BorderRadius.all(Radius.circular(23)),
               ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.yellow, width: 1.5),
+
+              labelText: widget.label,
+              labelStyle: textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+              hintText: widget.hintText,
+              hintStyle: textTheme.bodyMedium?.copyWith(fontSize: 14.sp),
+
+              // ------- Prefix Icon -------
+              prefixIcon: IconTheme(
+                data: theme.iconTheme.copyWith(size: 18.sp),
+                child: widget.prefixIcon,
               ),
-            ),
+
+              // ------- Suffix Icon (optional) -------
+              suffixIcon: widget.suffixIcon != null
+                  ? IconTheme(
+                      data: theme.iconTheme.copyWith(size: 16.sp),
+                      child: widget.suffixIcon!,
+                    )
+                  : null,
+
+              // 🔥 الآن نستخدم الـ InputDecorationTheme من الثيم مباشرة
+            ).applyDefaults(theme.inputDecorationTheme),
           ),
         );
       },
