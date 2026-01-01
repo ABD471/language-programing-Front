@@ -5,6 +5,7 @@ import 'package:apartment_rental_system/features/rentel/home/widget/common_add_e
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 List<Step> buildSteps(BuildContext context, dynamic controller) {
   final theme = Theme.of(context);
@@ -17,7 +18,6 @@ List<Step> buildSteps(BuildContext context, dynamic controller) {
       isActive: controller.currentStep.value >= 0,
       controller: controller,
     ),
-
     Step(
       isActive: controller.currentStep.value >= 1,
       state: controller.currentStep.value > 1
@@ -27,14 +27,15 @@ List<Step> buildSteps(BuildContext context, dynamic controller) {
       content: Column(
         children: [
           buildDetailsForm(controller),
-          const SizedBox(height: 20),
-
+          SizedBox(height: 2.h),
           Obx(
             () => DropdownButtonFormField<String>(
               value: controller.selectedCity.value,
-
               dropdownColor: theme.colorScheme.surface,
-              style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+              style: TextStyle(
+                color: theme.textTheme.bodyLarge?.color,
+                fontSize: 12.sp,
+              ),
               items: controller.cities
                   .map<DropdownMenuItem<String>>(
                     (String city) => DropdownMenuItem<String>(
@@ -48,38 +49,43 @@ List<Step> buildSteps(BuildContext context, dynamic controller) {
                 filled: true,
                 fillColor: theme.colorScheme.surface,
                 labelText: "select_city".tr,
-                labelStyle: TextStyle(color: theme.primaryColor),
+                labelStyle: TextStyle(
+                  color: theme.primaryColor,
+                  fontSize: 11.sp,
+                ),
                 prefixIcon: Icon(
                   Icons.location_city_rounded,
                   color: theme.primaryColor,
+                  size: 18.sp,
                 ),
-
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4.w),
                   borderSide: BorderSide(
                     color: theme.primaryColor.withOpacity(0.5),
                     width: 1,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4.w),
                   borderSide: BorderSide(color: theme.primaryColor, width: 2),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 20),
-
-          Text("tap_on_map_hint".tr, style: theme.textTheme.bodySmall),
-          const SizedBox(height: 10),
+          SizedBox(height: 2.h),
+          Text(
+            "tap_on_map_hint".tr,
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 9.sp),
+          ),
+          SizedBox(height: 1.h),
           Container(
-            height: 300,
+            height: 35.h,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(5.w),
               border: Border.all(color: theme.primaryColor.withOpacity(0.5)),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(5.w),
               child: FlutterMap(
                 options: MapOptions(
                   initialCenter: controller.pickedLocation.value,
@@ -98,12 +104,12 @@ List<Step> buildSteps(BuildContext context, dynamic controller) {
                       markers: [
                         Marker(
                           point: controller.pickedLocation.value,
-                          width: 50,
-                          height: 50,
-                          child: const Icon(
+                          width: 12.w,
+                          height: 12.w,
+                          child: Icon(
                             Icons.location_on,
                             color: Colors.red,
-                            size: 40,
+                            size: 25.sp,
                           ),
                         ),
                       ],
@@ -116,7 +122,6 @@ List<Step> buildSteps(BuildContext context, dynamic controller) {
         ],
       ),
     ),
-
     createStep(
       controller: controller,
       index: 2,

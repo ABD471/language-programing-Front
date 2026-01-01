@@ -1,8 +1,9 @@
- import 'package:apartment_rental_system/common/model/Apartment.dart';
-import 'package:apartment_rental_system/testuils/updat_home.dart';
+
+
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 import 'package:flutter/material.dart';
 
-void openDetails(BuildContext context, Apartment apt) {
+void openDetails(BuildContext context, ApartmentTest apt) {
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 420),

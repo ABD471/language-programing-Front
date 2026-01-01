@@ -2,12 +2,11 @@ import 'dart:ui';
 import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildAppBar.dart';
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildLoadingOverlay.dart';
-
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildStepper.dart';
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildSteps.dart';
-import 'package:apartment_rental_system/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 import 'package:apartment_rental_system/features/rentel/home/controller/addApartmentController.dart';
 
 class AddApartmentScreen extends GetView<AddApartmentController> {
@@ -15,7 +14,6 @@ class AddApartmentScreen extends GetView<AddApartmentController> {
 
   @override
   Widget build(BuildContext context) {
-    print(sharedPreferences.getString("language"));
     final controller = Get.put(AddApartmentController());
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
@@ -27,16 +25,15 @@ class AddApartmentScreen extends GetView<AddApartmentController> {
         child: Stack(
           children: [
             Positioned(
-              top: -50,
-              right: -50,
+              top: -6.h,
+              right: -12.w,
               child: CircleAvatar(
-                radius: 100,
+                radius: 25.w,
                 backgroundColor: isDark
                     ? Colors.white.withOpacity(0.02)
                     : Colors.white.withOpacity(0.1),
               ),
             ),
-
             SafeArea(
               top: false,
               child: Obx(
@@ -44,9 +41,10 @@ class AddApartmentScreen extends GetView<AddApartmentController> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).padding.top + 85,
-                        left: 10,
-                        right: 10,
+                        top: MediaQuery.of(context).padding.top + 10.h,
+                        left: 2.5.w,
+                        right: 2.5.w,
+                        bottom: 2.h,
                       ),
                       child: AnimatedOpacity(
                         opacity: controller.isUploading.value ? 0.1 : 1.0,
@@ -56,18 +54,17 @@ class AddApartmentScreen extends GetView<AddApartmentController> {
                             color: theme.colorScheme.surface.withOpacity(
                               isDark ? 0.95 : 0.85,
                             ),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(8.w),
                             boxShadow: [
                               BoxShadow(
                                 color: isDark ? Colors.black54 : Colors.black12,
-                                blurRadius: 20,
-                                spreadRadius: 5,
+                                blurRadius: 5.w,
+                                spreadRadius: 1.w,
                               ),
                             ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-
+                            borderRadius: BorderRadius.circular(8.w),
                             child: Theme(
                               data: theme.copyWith(
                                 canvasColor: Colors.transparent,

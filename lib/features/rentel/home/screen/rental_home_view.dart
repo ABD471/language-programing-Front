@@ -1,5 +1,5 @@
 import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
-import 'package:apartment_rental_system/features/rentel/Notification/controller/notificationController.dart';
+import 'package:apartment_rental_system/common/features/Notification/controller/notificationController.dart';
 import 'package:apartment_rental_system/features/rentel/home/controller/rental_home_controller.dart';
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildAppBar.dart';
 import 'package:apartment_rental_system/features/rentel/home/widget/home/buildApartmentCard.dart';
@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 class MyApartmentsScreen extends StatelessWidget {
   final controller = Get.put(RentalApartmentController());
   final notificationController = Get.find<NotificationController>();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -18,7 +19,6 @@ class MyApartmentsScreen extends StatelessWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight + 10),
         child: Obx(

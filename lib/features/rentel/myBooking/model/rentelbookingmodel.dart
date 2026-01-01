@@ -55,6 +55,7 @@ class ApartmentData {
   final int addressId;
   final String paymentInformation;
   final String createdAt;
+  final String imageUrl;
 
   ApartmentData({
     required this.id,
@@ -68,16 +69,19 @@ class ApartmentData {
     required this.addressId,
     required this.paymentInformation,
     required this.createdAt,
+    required this.imageUrl,
   });
 
-  // تحويل JSON القادم من Laravel إلى Object في Flutter
   factory ApartmentData.fromJson(Map<String, dynamic> json) {
+    String firstImage = '';
+    if (json['images'] != null && (json['images'] as List).isNotEmpty) {
+      firstImage = json['images'][0]['full_url'] ?? '';
+    }
     return ApartmentData(
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      price: json['price']
-          .toString(), // نحولها لـ String لنتجنب مشاكل الـ Decimal
+      price: json['price'].toString(),
       bedrooms: json['bedrooms'] ?? 0,
       bathrooms: json['bathrooms'] ?? 0,
       area: json['area'] ?? 0,
@@ -85,10 +89,10 @@ class ApartmentData {
       addressId: json['address_id'] ?? 0,
       paymentInformation: json['payment_information'] ?? 'Cash',
       createdAt: json['created_at'] ?? '',
+      imageUrl: firstImage,
     );
   }
 
-  // في حال احتجت لإرسال البيانات مجدداً للسيرفر (اختياري)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -104,4 +108,3 @@ class ApartmentData {
     };
   }
 }
-// افترضنا وجود ApartmentData مسبقاً لديك

@@ -6,7 +6,7 @@ class BookingDetailsBinding extends Bindings {
   @override
   void dependencies() {
     final initialBooking =
-        Get.arguments as Booking; // أخذ الـ Booking من arguments
+        Get.arguments as Booking;
     Get.lazyPut<BookingDetailsController>(
       () => BookingDetailsController(initialBooking),
     );

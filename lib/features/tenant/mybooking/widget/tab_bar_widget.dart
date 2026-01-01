@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:sizer/sizer.dart';
 import '../../../../theme/maintheme.dart';
 
 class TabBarWidget extends StatelessWidget {
@@ -8,34 +10,75 @@ class TabBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      height: 45,
+      height: 6.h,
+      padding: EdgeInsets.all(0.5.h),
       decoration: BoxDecoration(
-        color: theme.highlightColor,
+        color: isDark ? theme.cardColor : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black26 : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: TabBar(
-        labelColor: const Color.fromARGB(255, 245, 223, 81),
-        unselectedLabelColor: const Color.fromARGB(255, 255, 255, 255),
+        labelColor: Colors.white,
+        unselectedLabelColor: isDark
+            ? Colors.grey.shade500
+            : Colors.grey.shade600,
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.primary, AppTheme.primary.withOpacity(0.9)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppTheme.primary, AppTheme.primary.withOpacity(0.85)],
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        tabs: const [
-          Tab(icon: Icon(Iconsax.clock, size: 18), text: 'الحالية'),
-          Tab(icon: Icon(Iconsax.tick_circle, size: 18), text: 'السابقة'),
-          Tab(icon: Icon(Iconsax.close_circle, size: 18), text: 'الملغاة'),
+        tabs: [
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Iconsax.clock, size: 13.sp),
+                SizedBox(width: 1.5.w),
+                Text('current_tab'.tr, style: TextStyle(fontSize: 10.sp)),
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Iconsax.tick_circle, size: 13.sp),
+                SizedBox(width: 1.5.w),
+                Text('previous_tab'.tr, style: TextStyle(fontSize: 10.sp)),
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Iconsax.close_circle, size: 13.sp),
+                SizedBox(width: 1.5.w),
+                Text('cancelled_tab'.tr, style: TextStyle(fontSize: 10.sp)),
+              ],
+            ),
+          ),
         ],
       ),
     );

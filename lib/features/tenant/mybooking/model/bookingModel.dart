@@ -1,4 +1,4 @@
-import 'package:apartment_rental_system/testuils/model/apartment.dart';
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 
 enum BookingStatus { pending, confirmed, canceled }
 
@@ -72,6 +72,7 @@ class Apartment {
   final int bedrooms;
   final int bathrooms;
   final int area;
+  final String imageUrl;
 
   Apartment({
     required this.id,
@@ -81,9 +82,14 @@ class Apartment {
     required this.bedrooms,
     required this.bathrooms,
     required this.area,
+    required this.imageUrl,
   });
 
   factory Apartment.fromJson(Map<String, dynamic> json) {
+    String firstImage = '';
+    if (json['images'] != null && (json['images'] as List).isNotEmpty) {
+      firstImage = json['images'][0]['full_url'] ?? '';
+    }
     return Apartment(
       id: json['id'],
       title: json['title'] ?? '',
@@ -92,6 +98,7 @@ class Apartment {
       bedrooms: json['bedrooms'] ?? 0,
       bathrooms: json['bathrooms'] ?? 0,
       area: json['area'] ?? 0,
+      imageUrl: firstImage,
     );
   }
 }

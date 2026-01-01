@@ -1,4 +1,4 @@
-import 'package:apartment_rental_system/features/rentel/Notification/controller/notificationController.dart';
+import 'package:apartment_rental_system/common/features/Notification/controller/notificationController.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -8,13 +8,12 @@ class NotificationService extends GetxService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
-  // تعريف القناة كمتغير ثابت لضمان التطابق
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'booking_channel_v2',
     'High Importance Bookings',
 
     description: 'Notifications for new booking requests',
-    importance: Importance.max, // تضمن ظهور الإشعار كـ Pop-up
+    importance: Importance.max,
     playSound: true,
     enableVibration: true,
   );
@@ -22,7 +21,6 @@ class NotificationService extends GetxService {
   Future<NotificationService> init() async {
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    // 1. إنشاء القناة في أندرويد برمجياً (مهم جداً للـ Foreground)
     await _localNotifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -80,7 +78,6 @@ class NotificationService extends GetxService {
   }
 
   void _onNotificationTap(String? bookingId) {
-    // التوجيه لصفحة الحجوزات مع تمرير الـ ID إذا أردت استخدامه في الصفحة
     Get.toNamed('/rentel-booking', arguments: bookingId);
   }
 

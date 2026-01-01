@@ -1,15 +1,15 @@
 import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/description_section.dart';
-import 'package:apartment_rental_system/testuils/amenities_section.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/amenities_section.dart';
 
-import 'package:apartment_rental_system/testuils/contact_card.dart';
-import 'package:apartment_rental_system/testuils/contact_card_rentel.dart';
-import 'package:apartment_rental_system/testuils/contreeelrer.dart';
-import 'package:apartment_rental_system/testuils/header_image_carousel.dart';
-import 'package:apartment_rental_system/testuils/map_preview.dart';
-import 'package:apartment_rental_system/testuils/model/apartment.dart';
-import 'package:apartment_rental_system/testuils/title_section.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/contact_card_rentel.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/header_image_carousel.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/map_preview.dart';
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/title_section.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class ApartmentDetailsScreenRental extends StatelessWidget {
   final ApartmentTest apartment;
@@ -22,27 +22,26 @@ class ApartmentDetailsScreenRental extends StatelessWidget {
     final ctrl = Get.put(ApartmentDetailsControllerTest(apartment));
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: CustomScrollView(
         controller: ctrl.scrollController,
         slivers: [
           SliverToBoxAdapter(child: HeaderImageCarouselTest(controller: ctrl)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TitleSectionTest(apartment: apartment),
-                  const SizedBox(height: 12),
-                  DescriptionSection(description: apartment.description),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 1.5.h),
+                  DescriptionSection(description: apartment.description.tr),
+                  SizedBox(height: 2.h),
                   AmenitiesSectionTest(apartment: apartment),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 2.h),
                   ContactCardTestRentel(controller: ctrl),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 2.h),
                   MapPreviewTest(controller: ctrl),
-                  const SizedBox(height: 100),
+                  SizedBox(height: 10.h),
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 Widget buildImageThumbnail({
   required int index,
@@ -9,52 +10,50 @@ Widget buildImageThumbnail({
   final bool isNetwork = imageData is String && imageData.startsWith('http');
 
   return Container(
-    margin: const EdgeInsets.all(4),
+    margin: EdgeInsets.all(1.w),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(4.w),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.1),
-          blurRadius: 8,
-          offset: const Offset(0, 4),
+          blurRadius: 2.w,
+          offset: Offset(0, 0.5.h),
         ),
       ],
     ),
     child: Stack(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(4.w),
           child: isNetwork
               ? Image.network(
                   imageData,
-                  width: 100,
-                  height: 100,
+                  width: 25.w,
+                  height: 25.w,
                   fit: BoxFit.cover,
-
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
-                      width: 100,
-                      height: 100,
+                      width: 25.w,
+                      height: 25.w,
                       color: Colors.grey[200],
-                      child: const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                      child: Center(
+                        child: CircularProgressIndicator(strokeWidth: 0.5.w),
                       ),
                     );
                   },
                 )
               : Image.file(
                   imageData as File,
-                  width: 100,
-                  height: 100,
+                  width: 25.w,
+                  height: 25.w,
                   fit: BoxFit.cover,
                 ),
         ),
-
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4.w),
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.center,
@@ -63,14 +62,13 @@ Widget buildImageThumbnail({
             ),
           ),
         ),
-
         Positioned(
-          top: 5,
-          right: 5,
+          top: 1.h,
+          right: 2.w,
           child: GestureDetector(
             onTap: onRemove,
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: EdgeInsets.all(1.w),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.9),
                 shape: BoxShape.circle,
@@ -78,9 +76,9 @@ Widget buildImageThumbnail({
                   BoxShadow(color: Colors.black26, blurRadius: 4),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.delete_outline_rounded,
-                size: 18,
+                size: 14.sp,
                 color: Colors.redAccent,
               ),
             ),

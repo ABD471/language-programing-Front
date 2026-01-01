@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -7,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final IconData? icon;
   final String? Function(String?)? validator;
+
   const CustomTextField({
     Key? key,
     required this.label,
@@ -23,15 +25,15 @@ class CustomTextField extends StatelessWidget {
     final bool isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 1.2.h),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(4.w),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              blurRadius: 2.w,
+              offset: Offset(0, 0.5.h),
             ),
           ],
         ),
@@ -42,6 +44,7 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            fontSize: 13.sp,
             color: isDark
                 ? Colors.white.withOpacity(0.9)
                 : theme.primaryColor.withOpacity(0.9),
@@ -52,7 +55,7 @@ class CustomTextField extends StatelessWidget {
                 ? Icon(
                     icon,
                     color: theme.primaryColor.withOpacity(0.6),
-                    size: 22,
+                    size: 20.sp,
                   )
                 : null,
             labelStyle: theme.textTheme.bodySmall?.copyWith(
@@ -60,44 +63,42 @@ class CustomTextField extends StatelessWidget {
                   ? Colors.white54
                   : theme.primaryColor.withOpacity(0.5),
               fontWeight: FontWeight.bold,
+              fontSize: 14.sp,
             ),
             floatingLabelStyle: theme.textTheme.bodySmall?.copyWith(
               color: theme.primaryColor,
               fontWeight: FontWeight.bold,
+              fontSize: 14.sp,
             ),
             alignLabelWithHint: true,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 18,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 5.w,
+              vertical: 2.h,
             ),
             filled: true,
-
             fillColor: isDark
                 ? Colors.white.withOpacity(0.05)
                 : Colors.white.withOpacity(0.9),
-
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4.w),
               borderSide: BorderSide(
                 color: isDark ? Colors.white10 : Colors.white,
                 width: 1,
               ),
             ),
-
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4.w),
               borderSide: BorderSide(
                 color: theme.primaryColor.withOpacity(0.5),
                 width: 1.5,
               ),
             ),
-
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4.w),
               borderSide: const BorderSide(color: Colors.redAccent, width: 1),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4.w),
               borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
             ),
           ),

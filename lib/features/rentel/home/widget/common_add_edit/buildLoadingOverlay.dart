@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 Widget buildLoadingOverlay(BuildContext context, {String? message}) {
   final theme = Theme.of(context);
@@ -11,22 +12,23 @@ Widget buildLoadingOverlay(BuildContext context, {String? message}) {
       child: Card(
         elevation: 10,
         color: isDark ? Colors.grey[900] : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.w)),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
-                strokeWidth: 3,
+                strokeWidth: 0.8.w,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 2.5.h),
               Text(
                 message ?? "uploading_msg".tr,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
                   color: isDark ? Colors.white70 : Colors.black87,
                 ),
               ),

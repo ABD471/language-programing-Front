@@ -1,4 +1,5 @@
 import 'package:apartment_rental_system/features/tenant/mybooking/model/bookingModel.dart';
+import 'package:apartment_rental_system/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:apartment_rental_system/api/apiService.dart';
@@ -10,7 +11,8 @@ class BookingsController extends GetxController {
   var errorMessage = ''.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
+    
     super.onInit();
     fetchBookings();
   }

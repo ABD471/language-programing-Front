@@ -266,33 +266,48 @@ class BookingRequestCard extends StatelessWidget {
     required Color color,
     required VoidCallback onConfirm,
   }) {
+    // معرفة حالة الثيم داخل الدالة
+    final bool isDark = Get.isDarkMode;
+
     Get.dialog(
       Obx(() {
         final bool isBusy =
             activeController.isConfirming.value ||
             activeController.isRejecting.value;
+
         return PopScope(
           canPop: !isBusy,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: AlertDialog(
-              backgroundColor: Colors.white.withOpacity(0.9),
+              // تغيير الخلفية بناءً على الوضع
+              backgroundColor: isDark
+                  ? Colors.grey[900]!.withOpacity(0.9)
+                  : Colors.white.withOpacity(0.9),
+              surfaceTintColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.sp),
+                borderRadius: BorderRadius.circular(20.sp),
+                side: BorderSide(
+                  color: isDark ? Colors.white10 : Colors.black12,
+                  width: 1,
+                ),
               ),
               title: Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  color: color,
+                  color: color, // يبقى لون الأكشن (أخضر للقبول، أحمر للرفض)
                   fontSize: 16.sp,
                 ),
               ),
               content: Text(
                 message,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15.sp),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
               ),
               actionsAlignment: MainAxisAlignment.center,
               actions: [
@@ -302,8 +317,8 @@ class BookingRequestCard extends StatelessWidget {
                     child: Text(
                       "cancel".tr,
                       style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14.sp,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 13.sp,
                       ),
                     ),
                   ),
@@ -311,15 +326,17 @@ class BookingRequestCard extends StatelessWidget {
                   onPressed: isBusy ? null : onConfirm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: color,
-                    minimumSize: Size(30.w, 5.h),
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(35.w, 5.h),
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.sp),
+                      borderRadius: BorderRadius.circular(12.sp),
                     ),
                   ),
                   child: isBusy
                       ? SizedBox(
-                          width: 15.sp,
-                          height: 15.sp,
+                          width: 14.sp,
+                          height: 14.sp,
                           child: const CircularProgressIndicator(
                             color: Colors.white,
                             strokeWidth: 2,
@@ -329,8 +346,7 @@ class BookingRequestCard extends StatelessWidget {
                           confirmText,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 14.sp,
+                            fontSize: 13.sp,
                           ),
                         ),
                 ),

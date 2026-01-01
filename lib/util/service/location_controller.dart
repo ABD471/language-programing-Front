@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 class LocationController extends GetxController {
-  final RxString city = 'جاري تحديد الموقع...'.obs;
+  final RxString city = 'detecting_location'.tr.obs;
 
   @override
   void onInit() {
@@ -15,7 +15,7 @@ class LocationController extends GetxController {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        city.value = 'الموقع غير مفعل';
+        city.value = 'location_service_disabled'.tr;
         return;
       }
 
@@ -23,13 +23,13 @@ class LocationController extends GetxController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          city.value = 'تم رفض الإذن';
+          city.value = 'location_permission_denied'.tr;
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        city.value = 'الإذن مرفوض دائمًا';
+        city.value = 'location_permission_forever'.tr;
         return;
       }
 
@@ -46,12 +46,12 @@ class LocationController extends GetxController {
         city.value =
             placemarks.first.locality ??
             placemarks.first.administrativeArea ??
-            'غير معروف';
+            'unknown_location'.tr;
       } else {
-        city.value = 'غير معروف';
+        city.value = 'unknown_location'.tr;
       }
     } catch (e) {
-      city.value = 'خطأ في تحديد الموقع';
+      city.value = 'location_error'.tr;
     }
   }
 }

@@ -1,8 +1,9 @@
+import 'package:apartment_rental_system/features/tenant/mybooking/controller/myBookingController.dart';
+import 'package:apartment_rental_system/features/tenant/mybooking/model/bookingModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import '../controller/myBookingController.dart';
-import '../model/bookingModel.dart';
+import 'package:sizer/sizer.dart';
 import 'booking_card.dart';
 
 class BookingList extends StatelessWidget {
@@ -14,43 +15,38 @@ class BookingList extends StatelessWidget {
     final controller = Get.find<BookingsController>();
 
     return Obx(() {
-      // 1. حالة التحميل
       if (controller.isLoading.value && controller.bookings.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      // 2. حالة وجود خطأ
       if (controller.errorMessage.isNotEmpty && controller.bookings.isEmpty) {
         return _buildScrollableEmptyState(
           controller,
           icon: Icons.error_outline,
-          message: controller.errorMessage.value,
+          message: controller.errorMessage.value.tr,
         );
       }
 
       final bookings = controller.getBookingsByStatus(status);
 
-      // 3. حالة عدم وجود حجوزات لهذه التبويب
       if (bookings.isEmpty) {
         return _buildScrollableEmptyState(
           controller,
           icon: Icons.event_busy_rounded,
-          message: 'لا توجد حجوزات لهذه الحالة حالياً',
+          message: 'no_bookings_found'.tr,
         );
       }
 
-      // 4. عرض القائمة مع الأنيميشن والسحب للتحديث
       return RefreshIndicator(
         onRefresh: controller.fetchBookings,
-        displacement: 40, // إزاحة مؤشر التحميل ليكون أوضح
-        edgeOffset: 20,
+        displacement: 4.h,
+        edgeOffset: 2.h,
         child: AnimationLimiter(
           child: ListView.builder(
-            // الحفاظ على حالة القائمة وجعلها قابلة للسحب دائماً
             physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(), // تأثير الارتداد الجمالي
+              parent: BouncingScrollPhysics(),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
             itemCount: bookings.length,
             itemBuilder: (context, index) {
               return AnimationConfiguration.staggeredList(
@@ -71,7 +67,6 @@ class BookingList extends StatelessWidget {
     });
   }
 
-  // دالة لبناء واجهة "لا يوجد بيانات" قابلة للسحب (Refreshable)
   Widget _buildScrollableEmptyState(
     BookingsController controller, {
     required IconData icon,
@@ -84,39 +79,40 @@ class BookingList extends StatelessWidget {
           parent: BouncingScrollPhysics(),
         ),
         children: [
-          SizedBox(height: Get.height * 0.25), // موازنة العناصر في المنتصف
+          SizedBox(height: 25.h),
           Center(
             child: Column(
               children: [
-                // خلفية دائرية خفيفة للأيقونة لزيادة الجمالية
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(5.w),
                   decoration: BoxDecoration(
                     color: Colors.grey.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 70, color: Colors.grey.shade400),
+                  child: Icon(icon, size: 50.sp, color: Colors.grey.shade400),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 2.h),
                 Text(
                   message,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey.shade600,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 1.h),
                 Text(
-                  'اسحب للأسفل للتحديث',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                  'pull_to_refresh'.tr,
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: Colors.grey.shade400,
+                  ),
                 ),
               ],
             ),
           ),
-          // سبيسر لضمان أن القائمة أطول من الشاشة ليتم التمرير
-          SizedBox(height: Get.height * 0.2),
+          SizedBox(height: 20.h),
         ],
       ),
     );

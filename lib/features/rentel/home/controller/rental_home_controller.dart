@@ -1,6 +1,6 @@
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
-import 'package:apartment_rental_system/testuils/model/apartment.dart';
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

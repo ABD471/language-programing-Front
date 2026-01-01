@@ -1,14 +1,15 @@
-import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
+
 import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/full_screen_gallery.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HeaderImageCarousel extends StatelessWidget {
-  final ApartmentDetailsController controller;
-  const HeaderImageCarousel({super.key, required this.controller});
+class HeaderImageCarouselTest extends StatelessWidget {
+  final ApartmentDetailsControllerTest controller;
+  const HeaderImageCarouselTest({super.key, required this.controller});
 
   void _openGallery(BuildContext context, int initial) {
     Navigator.push(

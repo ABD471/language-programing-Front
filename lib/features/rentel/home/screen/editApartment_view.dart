@@ -6,6 +6,7 @@ import 'package:apartment_rental_system/features/rentel/home/widget/common_add_e
 import 'package:apartment_rental_system/features/rentel/home/widget/common_add_edit/buildStepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class EditApartmentScreen extends StatelessWidget {
   final controller = Get.put(EditApartmentController());
@@ -22,10 +23,10 @@ class EditApartmentScreen extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -50,
-              right: -50,
+              top: -6.h,
+              right: -12.w,
               child: CircleAvatar(
-                radius: 100,
+                radius: 25.w,
                 backgroundColor: isDark
                     ? Colors.white.withOpacity(0.02)
                     : Colors.white.withOpacity(0.1),
@@ -38,10 +39,10 @@ class EditApartmentScreen extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).padding.top + 85,
-                        left: 12,
-                        right: 12,
-                        bottom: 12,
+                        top: MediaQuery.of(context).padding.top + 10.h,
+                        left: 3.w,
+                        right: 3.w,
+                        bottom: 2.h,
                       ),
                       child: AnimatedOpacity(
                         opacity: controller.isUpdating.value ? 0.3 : 1.0,
@@ -51,12 +52,12 @@ class EditApartmentScreen extends StatelessWidget {
                             color: theme.colorScheme.surface.withOpacity(
                               isDark ? 0.9 : 0.8,
                             ),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(8.w),
                             boxShadow: [
                               BoxShadow(
                                 color: isDark ? Colors.black54 : Colors.black12,
-                                blurRadius: 20,
-                                spreadRadius: 2,
+                                blurRadius: 5.w,
+                                spreadRadius: 0.5.w,
                               ),
                             ],
                           ),

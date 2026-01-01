@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
-
 import 'package:apartment_rental_system/helper/const/role.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,24 +14,21 @@ class RegisterAccountcontroller extends GetxController {
   late TextEditingController password_confirmation;
   late TextEditingController phone;
 
-  /// ⚡ متغيرات إخفاء كلمة السر
   RxBool obscurePassword = true.obs;
   RxBool obscureConfirm = true.obs;
 
   late var profile;
+
   var selectedRole = UserRole.tenant.obs;
 
-  // تغيير الاختيار
   void setRole(UserRole role) {
     selectedRole.value = role;
   }
 
-  /// ✔️ تبديل حالة إخفاء كلمة المرور
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
   }
 
-  /// ✔️ تبديل حالة إخفاء تأكيد كلمة المرور
   void toggleConfirmVisibility() {
     obscureConfirm.value = !obscureConfirm.value;
   }
@@ -45,7 +40,6 @@ class RegisterAccountcontroller extends GetxController {
     password = TextEditingController();
     password_confirmation = TextEditingController();
     phone = TextEditingController();
-
     super.onInit();
   }
 
@@ -62,15 +56,14 @@ class RegisterAccountcontroller extends GetxController {
         return;
       }
 
-      // البيانات المرسلة
       final Map<String, String> fields = {
         "email": email.text,
         "password": password.text,
         "password_confirmation": password_confirmation.text,
         "phone": phone.text,
-        "role": selectedRole.value == UserRole.tenant ? "tenant" : "rented",
 
-        // البيانات القادمة من الشاشة السابقة
+        "role": selectedRole.value == UserRole.tenant ? "tenant" : "rental",
+
         "first_name": profile["firstname"],
         "last_name": profile["lastname"],
         "date_of_birth": profile["dob"],
@@ -93,15 +86,9 @@ class RegisterAccountcontroller extends GetxController {
       final statusCode = result["statusCode"];
       final body = result["body"];
 
-      // ---------------------------------------------------------
-      // 1️⃣ الحالة الأولى — المستخدم موجود مسبقًا
-      // statusCode = 200 و body["status"] = 1
-      // ---------------------------------------------------------
       if (statusCode == 200 && body["status"] == 1) {
-        // إعادة إرسال OTP
         final args = {"email": email.text, "urlclient": "otpRegister"};
         Get.toNamed("/verfiyOtpEmailPage", arguments: args);
-
         Get.snackbar(
           "success".tr,
           "otp_resend".tr,
@@ -110,74 +97,19 @@ class RegisterAccountcontroller extends GetxController {
         return;
       }
 
-      // ---------------------------------------------------------
-      // 2️⃣ حالة النجاح — مستخدم جديد تم إنشاؤه
-      // statusCode = 201 و body["status"] = 1
-      // ---------------------------------------------------------
       if (statusCode == 201 && body["status"] == 1) {
         final args = {"email": email.text, "urlclient": "otpRegister"};
         Get.toNamed("/verfiyOtpEmailPage", arguments: args);
-
         Get.snackbar("success".tr, "account_created_success_otp_sent".tr);
         return;
       }
 
-      // ---------------------------------------------------------
-      // 3️⃣ أخطاء التحقق 422
-      // ---------------------------------------------------------
       if (statusCode == 422 && body["errors"] != null) {
         final errors = body["errors"];
-
-        if (errors.containsKey("email") && errors.containsKey("phone")) {
-          showDialogWithLottie(
-            title: "dialog_error_title".tr,
-            message: "phone_and_email_exist".tr,
-            lottieAsset: "assets/lottie/Error.json",
-          );
-          return;
-        }
-
-        if (errors.containsKey("email")) {
-          showDialogWithLottie(
-            title: "dialog_error_title".tr,
-            message: "email_exist".tr,
-            lottieAsset: "assets/lottie/Error.json",
-          );
-          return;
-        }
-
-        if (errors.containsKey("phone")) {
-          final phoneErrors = errors["phone"];
-          if (phoneErrors.toString().contains("format")) {
-            showDialogWithLottie(
-              title: "dialog_error_title".tr,
-              message: "phone_invalid_format".tr,
-              lottieAsset: "assets/lottie/Error.json",
-            );
-            return;
-          }
-
-          showDialogWithLottie(
-            title: "dialog_error_title".tr,
-            message: "phone_exist".tr,
-            lottieAsset: "assets/lottie/Error.json",
-          );
-          return;
-        }
-
-        if (errors.containsKey("password")) {
-          showDialogWithLottie(
-            title: "dialog_error_title".tr,
-            message: "password_min_8".tr,
-            lottieAsset: "assets/lottie/Error.json",
-          );
-          return;
-        }
+        handleValidationErrors(errors);
+        return;
       }
 
-      // ---------------------------------------------------------
-      // 4️⃣ أخطاء أخرى غير متوقعة
-      // ---------------------------------------------------------
       showDialogWithLottie(
         title: "dialog_unexpected_title".tr,
         message: "${"dialog_unexpected_code".tr} $statusCode",
@@ -191,6 +123,36 @@ class RegisterAccountcontroller extends GetxController {
       );
     } finally {
       isloading.value = false;
+    }
+  }
+
+  void handleValidationErrors(Map errors) {
+    if (errors.containsKey("email") && errors.containsKey("phone")) {
+      showDialogWithLottie(
+        title: "dialog_error_title".tr,
+        message: "phone_and_email_exist".tr,
+        lottieAsset: "assets/lottie/Error.json",
+      );
+    } else if (errors.containsKey("email")) {
+      showDialogWithLottie(
+        title: "dialog_error_title".tr,
+        message: "email_exist".tr,
+        lottieAsset: "assets/lottie/Error.json",
+      );
+    } else if (errors.containsKey("phone")) {
+      showDialogWithLottie(
+        title: "dialog_error_title".tr,
+        message: errors["phone"].toString().contains("format")
+            ? "phone_invalid_format".tr
+            : "phone_exist".tr,
+        lottieAsset: "assets/lottie/Error.json",
+      );
+    } else if (errors.containsKey("password")) {
+      showDialogWithLottie(
+        title: "dialog_error_title".tr,
+        message: "password_min_8".tr,
+        lottieAsset: "assets/lottie/Error.json",
+      );
     }
   }
 

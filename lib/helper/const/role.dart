@@ -1,1 +1,1 @@
-enum UserRole { rented, tenant }
+enum UserRole { rental, tenant }

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
-import 'package:apartment_rental_system/main.dart';
+
 import 'package:apartment_rental_system/util/service/authservice.dart';
 import 'package:apartment_rental_system/util/service/notification_service.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +56,6 @@ class VerifyOtpEmailController extends GetxController {
       return;
     }
 
-    // السماح فقط برقم واحد
     if (value.length > 1) {
       value = value.characters.last;
     }
@@ -64,7 +63,6 @@ class VerifyOtpEmailController extends GetxController {
     controllers[index].text = value;
     controllers[index].selection = TextSelection.collapsed(offset: 1);
 
-    // الانتقال للخانة التالية
     if (index < otpLength - 1) {
       FocusScope.of(Get.context!).requestFocus(focusNodes[index + 1]);
     } else {
@@ -127,6 +125,7 @@ class VerifyOtpEmailController extends GetxController {
                   body["token"],
                   body["data"]["role"],
                   body["data"]["id"].toString(),
+                  
                 );
                 await saveFcmToken();
                 if (body["data"]["role"] == "rental") {

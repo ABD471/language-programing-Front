@@ -6,7 +6,7 @@ import 'package:lottie/lottie.dart';
 class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
-    final token = AuthService.token; // متزامن
+    final token = AuthService.token; 
 
     if (token == null || token.isEmpty) {
       return const RouteSettings(name: "/loginScreen");

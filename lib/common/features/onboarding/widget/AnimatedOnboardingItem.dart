@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class AnimatedOnboardingItem extends StatefulWidget {
   final String image;
@@ -38,26 +40,30 @@ class _AnimatedOnboardingItemState extends State<AnimatedOnboardingItem> {
       opacity: _visible ? 1 : 0,
       duration: const Duration(milliseconds: 600),
       child: AnimatedSlide(
-        offset: _visible ? Offset.zero : const Offset(0, 0.3),
+        offset: _visible ? Offset.zero : const Offset(0, 0.2),
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOut,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // ---------------- Image ----------------
-            Image.asset(widget.image, height: 260, fit: BoxFit.contain),
+            Image.asset(
+              widget.image, 
+              height: 35.h, 
+              fit: BoxFit.contain
+            ),
 
-            const SizedBox(height: 40),
+            SizedBox(height: 5.h),
 
-            // ---------------- Title ----------------
             Text(
-              widget.title,
+              widget.title.tr,
               style: theme.textTheme.headlineLarge?.copyWith(
+                fontSize: 22.sp,
                 color: colors.primary,
+                fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
                     blurRadius: 8,
-                    color: Colors.black.withOpacity(0.25),
+                    color: Colors.black.withOpacity(0.15),
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -65,15 +71,19 @@ class _AnimatedOnboardingItemState extends State<AnimatedOnboardingItem> {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 14),
+            SizedBox(height: 2.h),
 
-            // ---------------- Description ----------------
-            Text(
-              widget.description,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colors.primary.withOpacity(0.85),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Text(
+                widget.description.tr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 12.sp,
+                  color: colors.primary.withOpacity(0.85),
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

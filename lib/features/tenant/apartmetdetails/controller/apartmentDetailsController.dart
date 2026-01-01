@@ -1,210 +1,209 @@
+import 'package:apartment_rental_system/api/apiService.dart';
+import 'package:apartment_rental_system/api/urlClient.dart';
 import 'package:apartment_rental_system/main.dart';
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:lottie/lottie.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
-import '../../../../common/model/Apartment.dart';
 
-class ApartmentDetailsController extends GetxController {
-  final Apartment apartment;
+class ApartmentDetailsControllerTest extends GetxController {
+  final ApartmentTest apartment;
 
-  ApartmentDetailsController(this.apartment);
+  ApartmentDetailsControllerTest(this.apartment);
 
   // Reactive state
   final RxList<String> images = <String>[].obs;
   final RxInt currentCarouselIndex = 0.obs;
   final RxDouble scrollOffset = 0.0.obs;
-  final RxList<DateTime> bookedDates = <DateTime>[].obs;
   final RxString phone = ''.obs;
+  RxBool isloading = false.obs;
   final Rx<CalendarFormat> calendarFormat = CalendarFormat.month.obs;
   final Rx<DateTime> focusedDay = DateTime.now().obs;
+  Rxn<DateTimeRange> selectedDateRange = Rxn<DateTimeRange>();
 
-  ScrollController? scrollController;
+  late final ScrollController scrollController;
 
   @override
   void onInit() async {
-    print(await storage.read(key: "token"));
-
     super.onInit();
     _initData();
     scrollController = ScrollController()..addListener(_onScroll);
+    print(await storage.read(key: "token"));
   }
 
   void _initData() {
-    images.assignAll(_buildImages());
-    phone.value = _initialPhone();
-    loadBookedDates();
-  }
+    images.assignAll(apartment.images.map((e) => e.url).toList());
 
-  List<String> _buildImages() {
-    return [
-      if ((apartment.imageUrl ?? '').isNotEmpty) apartment.imageUrl!,
-      "https://images.unsplash.com/photo-1502672023488-70e25813eb80",
-      "https://images.unsplash.com/photo-1527030280862-64139fba04ca",
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
-    ];
-  }
-
-  String _initialPhone() {
-    if (apartment.phoneNumber != null && apartment.phoneNumber!.isNotEmpty) {
-      return apartment.phoneNumber!;
-    }
-
-    return '+963999999999';
+    phone.value = apartment.owner.phone;
   }
 
   void _onScroll() {
-    scrollOffset.value = scrollController?.offset ?? 0.0;
+    scrollOffset.value = scrollController.offset;
   }
 
-  // Booked dates loader (handles List<DateTime> or List<String>)
-  void loadBookedDates() {
-    try {
-      if (apartment.bookedDates != null && apartment.bookedDates!.isNotEmpty) {
-        bookedDates.assignAll(apartment.bookedDates!);
-      } else if (apartment.bookedDatesString != null &&
-          apartment.bookedDatesString!.isNotEmpty) {
-        bookedDates.assignAll(
-          apartment.bookedDatesString!.map((s) => DateTime.parse(s)).toList(),
-        );
-      }
-
-      // fallback sample data if empty (optional)
-      if (bookedDates.isEmpty) {
-        final now = DateTime.now();
-        bookedDates.assignAll([
-          now.add(const Duration(days: 2)),
-          now.add(const Duration(days: 3)),
-          now.add(const Duration(days: 7)),
-          now.add(const Duration(days: 8)),
-        ]);
-      }
-    } catch (e) {
-      // safe fallback
-      bookedDates.clear();
-      debugPrint('Error parsing booked dates: $e');
-    }
-  }
-
-  bool isDateBooked(DateTime date) {
-    return bookedDates.any(
-      (d) => d.year == date.year && d.month == date.month && d.day == date.day,
+  // 📍 الموقع
+  LatLng get location {
+    return LatLng(
+      double.tryParse(apartment.address.latitude) ?? 33.5138,
+      double.tryParse(apartment.address.longitude) ?? 36.2765,
     );
   }
 
-  LatLng get location {
-    // استبدل بهذه الإحداثيات إذا كانت متوفرة في الموديل
-    return apartment.latitude != null && apartment.longitude != null
-        ? LatLng(apartment.latitude!, apartment.longitude!)
-        : const LatLng(33.5138, 36.2765);
-  }
-
-  // ------- Actions: call, whatsapp, copy, open maps -------
+  // 📞 اتصال
   Future<void> callOwner() async {
-    String rawPhone = phone.value.trim();
+    String cleanPhone = phone.value.replaceAll(RegExp(r'[^0-9+]'), '');
 
-    // تنظيف الرقم من أي أحرف غير رقمية
-    String cleanPhone = rawPhone.replaceAll(RegExp(r'[^0-9+]'), '');
-
-    // إذا بدأ الرقم بـ 0 نحوله إلى كود سوريا
     if (cleanPhone.startsWith('0')) {
       cleanPhone = '+963${cleanPhone.substring(1)}';
     }
-
-    // إذا لم يبدأ بـ +، أضفه
     if (!cleanPhone.startsWith('+')) {
       cleanPhone = '+$cleanPhone';
     }
 
     final Uri telUri = Uri(scheme: 'tel', path: cleanPhone);
 
-    try {
-      if (await canLaunchUrl(telUri)) {
-        await launchUrl(telUri, mode: LaunchMode.externalApplication);
-      } else {
-        Get.snackbar(
-          'خطأ',
-          'لا يوجد تطبيق هاتف على الجهاز أو المحاكي',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'حدث خطأ أثناء محاولة الاتصال: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+    if (await canLaunchUrl(telUri)) {
+      await launchUrl(telUri, mode: LaunchMode.externalApplication);
+    } else {
+      Get.snackbar('خطأ', 'لا يمكن إجراء الاتصال');
     }
   }
 
+  // 💬 واتساب
   Future<void> openWhatsApp() async {
-    String rawPhone = phone.value.trim();
-    String cleanPhone = rawPhone.replaceAll(RegExp(r'[^0-9+]'), '');
+    String waNumber = phone.value.replaceAll(RegExp(r'[^0-9]'), '');
 
-    if (cleanPhone.startsWith('0')) {
-      cleanPhone = '+963${cleanPhone.substring(1)}';
-    }
-
-    if (!cleanPhone.startsWith('+')) {
-      cleanPhone = '+$cleanPhone';
-    }
-
-    // إزالة علامة + للواتساب
-    String waNumber = cleanPhone.replaceFirst('+', '');
     final Uri waUri = Uri.parse('https://wa.me/$waNumber');
 
-    try {
-      if (await canLaunchUrl(waUri)) {
-        await launchUrl(waUri, mode: LaunchMode.externalApplication);
-      } else {
-        Get.snackbar(
-          'خطأ',
-          'لا يمكن فتح واتساب على هذا الجهاز',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'حدث خطأ أثناء فتح واتساب: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+    if (await canLaunchUrl(waUri)) {
+      await launchUrl(waUri, mode: LaunchMode.externalApplication);
+    } else {
+      Get.snackbar('خطأ', 'لا يمكن فتح واتساب');
     }
   }
 
+  // 📋 نسخ الرقم
   Future<void> copyPhone() async {
     await Clipboard.setData(ClipboardData(text: phone.value));
-    Get.snackbar(
-      'تم',
-      'تم نسخ الرقم إلى الحافظة',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
+    Get.snackbar('تم', 'تم نسخ الرقم');
   }
 
+  // 🗺️ خرائط
   Future<void> openExternalMaps() async {
     final lat = location.latitude;
     final lng = location.longitude;
+
     final uri = Uri.parse(
       'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
     );
+
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar(
-        'خطأ',
-        'تعذر فتح الخرائط',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('خطأ', 'تعذر فتح الخرائط');
     }
   }
 
   @override
   void onClose() {
-    scrollController?.removeListener(_onScroll);
-    scrollController?.dispose();
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
     super.onClose();
+  }
+
+  Future<void> booking() async {
+    if (selectedDateRange.value == null) {
+      Get.snackbar('تنبيه', 'يرجى اختيار تاريخ الحجز');
+      return;
+    }
+
+    isloading.value = true;
+
+    try {
+      // -------------------------
+      // تحويل التواريخ للـ Backend بصيغة yyyy-MM-dd
+      // -------------------------
+      String formatDate(DateTime date) =>
+          "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+      print(formatDate(selectedDateRange.value!.start));
+      final Map<String, dynamic> payload = {
+        "apartment_id": apartment.id, // رقم الشقة
+        "start_date": formatDate(selectedDateRange.value!.start),
+        "end_date": formatDate(selectedDateRange.value!.end),
+      };
+
+      final result = await ApiService.postRequest(
+        url: urlClient["requestBooking"]!,
+        useAuth: true,
+        payload: payload,
+      );
+
+      final statusCode = result["statusCode"];
+      final body = result["body"];
+      final message = body["message"]?.toString() ?? "";
+
+      // -------------------------
+      // SUCCESS CASE
+      // -------------------------
+      if ((statusCode == 200 || statusCode == 201) && body["status"] == 1) {
+        showDialogWithLottie(
+          title: "نجاح",
+          message: "تم إرسال طلب الحجز بنجاح",
+          lottieAsset: "assets/lottie/Success.json",
+        );
+        return;
+      }
+
+      // -------------------------
+      // ERROR CASES
+      // -------------------------
+      if (statusCode == 401) {
+        Get.snackbar('خطأ', 'غير مصرح لك');
+        return;
+      }
+
+      if (statusCode == 409) {
+        Get.snackbar('غير متاح', message);
+        return;
+      }
+
+      showDialogWithLottie(
+        title: "خطأ غير متوقع",
+        message: "رمز الخطأ: $statusCode",
+        lottieAsset: "assets/lottie/Alert.json",
+      );
+    } catch (e) {
+      showDialogWithLottie(
+        title: "استثناء",
+        message: "حدث خطأ أثناء الحجز: $e",
+        lottieAsset: "assets/lottie/Error.json",
+      );
+    } finally {
+      isloading.value = false;
+    }
+  }
+
+  void showDialogWithLottie({
+    required String title,
+    required dynamic message,
+    required String lottieAsset,
+  }) {
+    Get.defaultDialog(
+      title: title,
+      content: Column(
+        children: [
+          SizedBox(height: 150, child: Lottie.asset(lottieAsset)),
+          const SizedBox(height: 10),
+          Text(message, textAlign: TextAlign.center),
+        ],
+      ),
+      textConfirm: "dialog_confirm".tr,
+      confirmTextColor: Colors.white,
+      onConfirm: () => Get.back(),
+    );
   }
 }

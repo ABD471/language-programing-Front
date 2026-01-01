@@ -7,19 +7,44 @@ class DescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // الحصول على بيانات الثيم الحالية
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('الوصف', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(
+          'الوصف',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 12),
         ReadMoreText(
           description,
           trimLines: 4,
           trimMode: TrimMode.Line,
           trimCollapsedText: ' عرض المزيد',
           trimExpandedText: ' عرض أقل',
-          style: const TextStyle(fontSize: 15, height: 1.6, color: Colors.black87),
-          moreStyle: const TextStyle(fontWeight: FontWeight.bold),
+
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 15,
+            height: 1.6,
+
+            color: isDark ? Colors.grey[300] : Colors.black87,
+          ),
+
+          moreStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+          lessStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
         ),
       ],
     );

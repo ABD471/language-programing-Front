@@ -1,5 +1,8 @@
+import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
+import 'package:apartment_rental_system/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 import 'package:apartment_rental_system/features/tenant/mybooking/model/bookingModel.dart';
 import 'package:apartment_rental_system/features/tenant/mybooking/widget/booking_list.dart';
 import '../controller/myBookingController.dart';
@@ -11,69 +14,62 @@ class MyBookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final appBarColor = isDark ? Colors.grey[900] : const Color(0xFF2196F3);
+    final surfaceColor = isDark
+        ? Colors.grey[800]
+        : Colors.white.withOpacity(0.2);
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        // استخدام خلفية بيضاء مع تدرج خفيف كما في الصور
-        backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppBar(
-          // إزالة أيقونة الإشعارات كما طلبت
           automaticallyImplyLeading: false,
           elevation: 0,
-          backgroundColor: const Color(
-            0xFF2196F3,
-          ), // لون الـ AppBar الأزرق من صورك
+          backgroundColor: appBarColor,
           centerTitle: true,
-          title: const Text(
-            'حجوزاتي',
+          title: Text(
+            'my_bookings'.tr,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: 16.sp,
             ),
           ),
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
+            preferredSize: Size.fromHeight(8.h),
             child: Container(
-              margin: const EdgeInsets.only(bottom: 10, left: 16, right: 16),
+              margin: EdgeInsets.only(bottom: 1.h, left: 4.w, right: 4.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(
-                  0.2,
-                ), // خلفية شبه شفافة للتبابات
+                color: surfaceColor,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: TabBar(
                 dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
-                  color: Colors.white, // مؤشر أبيض صريح كما في شاشة "حجوزاتي"
+                  color: isDark
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                labelColor: const Color(
-                  0xFF2196F3,
-                ), // لون النص المختار (نفس لون الـ AppBar)
-                unselectedLabelColor: Colors.white,
-                labelStyle: const TextStyle(
+                labelColor: isDark ? Colors.white : const Color(0xFF2196F3),
+                unselectedLabelColor: isDark ? Colors.white70 : Colors.white,
+                labelStyle: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 13.sp,
                 ),
-                tabs: const [
-                  Tab(text: 'قيد الانتظار'),
-                  Tab(text: 'مكتملة'),
-                  Tab(text: 'ملغاة'),
+                tabs: [
+                  Tab(text: 'pending_tab'.tr),
+                  Tab(text: 'completed_tab'.tr),
+                  Tab(text: 'cancelled_tab'.tr),
                 ],
               ),
             ),
           ),
         ),
-        body: Container(
-          // إضافة تدرج خلفية يشبه الموجود في صورك
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [const Color(0xFF2196F3).withOpacity(0.1), Colors.white],
-            ),
-          ),
+        body: GradientBackground(
           child: const TabBarView(
             children: [
               BookingList(status: BookingStatus.pending),

@@ -1,140 +1,118 @@
-import 'package:apartment_rental_system/common/model/Apartment.dart';
-
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 import 'package:get/get.dart';
+import 'package:apartment_rental_system/api/apiService.dart';
+import 'package:apartment_rental_system/api/urlClient.dart';
 import 'package:flutter/material.dart';
 
-class HomeController extends GetxController {
-  // ---------- Reactive Variables ----------
-  var apartments = <Apartment>[].obs;
-  var filtered = <Apartment>[].obs;
+class HomeTestController extends GetxController {
+  var apartments = <ApartmentTest>[].obs;
+  var filtered = <ApartmentTest>[].obs;
   var selectedCity = 'الكل'.obs;
   var priceRange = const RangeValues(0, 200000).obs;
   var searchQuery = ''.obs;
   var isLoading = true.obs;
 
-  // ---------- Initialization ----------
   @override
   void onInit() {
     super.onInit();
-    _loadApartments();
+    loadApartmentsFromServer();
   }
 
   Future<void> refreshApartments() async {
-    // يمكنك هنا عمل fetch جديد من API أو List.generate
-    await Future.delayed(const Duration(seconds: 2));
-    // بعد جلب البيانات:
-    filtered.value = List.generate(
-      50,
-      (i) => Apartment(
-        id: 'apt_$i',
-        title: 'شقة ${(i % 3) + 1} غرفة',
-        city: ['دمشق', 'اللاذقية', 'حلب', 'طرطوس'][i % 4],
-        price: 20000 + i * 12000,
-        imageUrl: 'https://picsum.photos/seed/$i/400/200',
-        rating: 4.0 + (i % 5) * 0.15,
-        description: '',
-        amenities: [],
-      ),
-    );
+    await loadApartmentsFromServer();
   }
 
-  // Future<void> refreshApartments() async {
-  //   isLoading.value = true;
-  //   await Future.delayed(const Duration(seconds: 1)); // محاكاة جلب بيانات
-  //   // هنا ضع منطق إعادة جلب البيانات
-  //   filtered.value = apartments; // على سبيل المثال
-  //   isLoading.value = false;
-  // }
+  // ---------------- Load Apartments ----------------
+  Future<void> loadApartmentsFromServer() async {
+    try {
+      isLoading.value = true;
 
-  void setLoading(bool value) => isLoading.value = value;
-  void _loadApartments() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    final dummyApartments = List.generate(
-      8,
-      (i) => Apartment(
-        id: 'apt_$i',
-        title: 'شقة أنيقة - غرفة ${(i % 3) + 1}',
-        city: ['دمشق', 'اللاذقية', 'حلب', 'طرطوس'][i % 4],
-        price: 20000 + i * 12000,
-        imageUrl: 'https://picsum.photos/seed/parallax$i/900/600',
-        rating: 4.0 + (i % 5) * 0.15,
-        description: '',
-        amenities: [],
-      ),
-    );
+      final response = await ApiService.getRequest(
+        url: urlClient["getApartments"]!,
+        useAuth: true,
+      );
 
-    apartments.value = dummyApartments;
-    _applyFilters();
-    isLoading.value = false;
-    // try {
-    //   isLoading.value = true;
+      if (response["statusCode"] == 200) {
+        final List list = response["body"]["apartments"]["data"];
 
-    //   final response = await ApiService.getRequest(
-    //     url: urlClient["getApartments"]!, // مثال: api/apartment
-    //     useAuth: true,
-    //   );
+        final List<ApartmentTest> loadedApartments = [];
 
-    //   if (response["statusCode"] == 200) {
-    //     final body = response["body"];
+        for (final item in list) {
+          try {
+            loadedApartments.add(ApartmentTest.fromJson(item));
+          } catch (e) {
+            debugPrint('❌ ERROR PARSING ITEM ❌');
+            debugPrint(item.toString());
+            rethrow;
+          }
+        }
 
-    //     final List apartmentsJson = body["apartments"]["data"];
-
-    //     final List<Apartment> loadedApartments = apartmentsJson
-    //         .map((e) => Apartment.fromJson(e))
-    //         .toList();
-    //     print("43rreggfdg");
-    //     apartments.value = loadedApartments;
-    //     _applyFilters();
-    //   } else {
-    //     Get.snackbar("خطأ", "فشل في جلب الشقق");
-    //   }
-    // } catch (e) {
-    //   debugPrint("LOAD APARTMENTS ERROR: $e");
-    //   Get.snackbar("خطأ", "حدث خطأ غير متوقع");
-    // } finally {
-    //   isLoading.value = false;
-    // }
+        apartments.assignAll(loadedApartments);
+        filtered.assignAll(apartments);
+        print(filtered.first.images.first.url);
+        // applyFilters();
+      } else {
+        Get.snackbar("خطأ", "فشل في جلب الشقق");
+      }
+    } catch (e) {
+      debugPrint("LOAD APARTMENTS ERROR: $e");
+      Get.snackbar("خطأ", "حدث خطأ غير متوقع");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  // ---------- Filter Logic ----------
-  void _applyFilters() {
-    filtered.value = apartments.where((a) {
-      final matchesCity =
-          selectedCity.value == 'الكل' || a.city == selectedCity.value;
-      final withinPrice =
-          a.price! >= priceRange.value.start &&
-          a.price! <= priceRange.value.end;
-      final matchesSearch =
-          searchQuery.value.isEmpty ||
-          a.title!.contains(searchQuery.value) ||
-          a.city!.contains(searchQuery.value);
-      return matchesCity && withinPrice && matchesSearch;
-    }).toList();
+  // ---------------- Filters ----------------
+  void applyFilters() {
+    filtered.assignAll(
+      apartments.where((a) {
+        final matchesCity =
+            selectedCity.value == 'الكل' ||
+            a.address.city == selectedCity.value;
+
+        final priceValue = double.tryParse(a.price) ?? 0;
+        final withinPrice =
+            priceValue >= priceRange.value.start &&
+            priceValue <= priceRange.value.end;
+
+        final matchesSearch =
+            searchQuery.value.isEmpty ||
+            a.title.contains(searchQuery.value) ||
+            a.address.city.contains(searchQuery.value);
+
+        return matchesCity && withinPrice && matchesSearch;
+      }).toList(),
+    );
   }
 
   void changeCity(String city) {
     selectedCity.value = city;
-    _applyFilters();
+    applyFilters();
   }
 
   void changePrice(RangeValues range) {
     priceRange.value = range;
-    _applyFilters();
+    applyFilters();
   }
 
   void changeSearch(String query) {
     searchQuery.value = query;
-    _applyFilters();
+    applyFilters();
   }
 
   void resetFilters() {
     selectedCity.value = 'الكل';
     priceRange.value = const RangeValues(0, 200000);
     searchQuery.value = '';
-    _applyFilters();
+    applyFilters();
   }
 
-  void onTapDetails(Apartment apt) {
-    Get.toNamed('/apartment-details', arguments: apt);
+  List<String> get availableCities {
+    final set = apartments.map((a) => a.address.city).toSet();
+    return ['الكل', ...set];
+  }
+
+  void toDetiles(ApartmentTest apt) {
+    Get.toNamed("/apartment-details", arguments: apt);
   }
 }

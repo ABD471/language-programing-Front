@@ -1,13 +1,14 @@
-import 'package:apartment_rental_system/features/rentel/Chat/controller/chatController.dart';
-import 'package:apartment_rental_system/features/rentel/Chat/controller/chat_box_controller.dart';
-import 'package:apartment_rental_system/features/rentel/Chat/screen/chatBoxScreen.dart';
-import 'package:apartment_rental_system/features/rentel/Chat/screen/chatScreen.dart';
-import 'package:apartment_rental_system/features/rentel/Notification/controller/notificationController.dart';
-import 'package:apartment_rental_system/features/rentel/Notification/screen/notificationScreen.dart';
+import 'package:apartment_rental_system/common/features/Chat/controller/ChatController.dart';
+import 'package:apartment_rental_system/common/features/Chat/controller/chat_box_controller.dart';
+import 'package:apartment_rental_system/common/features/Chat/screen/chatBoxScreen.dart';
+import 'package:apartment_rental_system/common/features/Chat/screen/chatScreen.dart';
+
+import 'package:apartment_rental_system/common/features/Notification/controller/notificationController.dart';
+import 'package:apartment_rental_system/common/features/Notification/screen/notificationScreen.dart';
 import 'package:apartment_rental_system/features/rentel/home/screen/apartmentdetails.dart';
 import 'package:apartment_rental_system/features/rentel/myBooking/screen/incomingBookingsScreen.dart';
 import 'package:apartment_rental_system/features/rentel/rentelWrapper/screen/rentalMainWrapper.dart';
-import 'package:apartment_rental_system/features/tenant/apartmetdetails/screen/apartmentdetails.dart';
+
 import 'package:apartment_rental_system/common/features/auth/screen/forgetPassword.dart';
 import 'package:apartment_rental_system/common/features/auth/screen/login.dart';
 import 'package:apartment_rental_system/common/features/auth/screen/newPassword.dart';
@@ -16,19 +17,19 @@ import 'package:apartment_rental_system/common/features/auth/screen/registerpers
 import 'package:apartment_rental_system/features/tenant/mainwrapper/screen/mainwrapper.dart';
 import 'package:apartment_rental_system/common/screen/verfiy_otp_email_page.dart';
 import 'package:apartment_rental_system/features/tenant/mybooking/screen/booking_details_page.dart';
-import 'package:apartment_rental_system/common/features/onboarding/onboardingScreen.dart';
+import 'package:apartment_rental_system/common/features/onboarding/screen/onboardingScreen.dart';
 import 'package:apartment_rental_system/features/rentel/home/screen/addApartment_view.dart';
 import 'package:apartment_rental_system/features/rentel/home/screen/editApartment_view.dart';
 import 'package:apartment_rental_system/features/rentel/home/screen/rental_home_view.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/verfiy_password_requierd_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_email_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_language_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_password_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_phone_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_profile_page.dart';
-import 'package:apartment_rental_system/features/tenant/settings/screen/edit_theme_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/verfiy_password_requierd_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_email_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_language_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_password_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_phone_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_profile_page.dart';
+import 'package:apartment_rental_system/common/features/settings/screen/edit_theme_page.dart';
 import 'package:apartment_rental_system/common/features/splash/screen/splash.dart';
-import 'package:apartment_rental_system/testuils/apartmentdetails.dart';
+import 'package:apartment_rental_system/features/tenant/apartmetdetails/screen/apartmentdetails.dart';
 import 'package:apartment_rental_system/util/Binding/boookingdeatils.dart';
 import 'package:apartment_rental_system/util/Binding/rentel/rentalHomeBinding.dart';
 import 'package:apartment_rental_system/util/Binding/splashBinding.dart';
@@ -48,7 +49,7 @@ List<GetPage<dynamic>>? routes = [
     page: () => const RentalMainWrapper(),
     middlewares: [AuthMiddleware()],
     binding: BindingsBuilder(() {
-      Get.put(NotificationController()); // حقن الكنترولر هنا
+      Get.put(NotificationController()); 
     }),
   ),
 

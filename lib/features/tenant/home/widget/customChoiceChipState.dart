@@ -1,5 +1,7 @@
 import 'package:apartment_rental_system/theme/maintheme.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
+import 'package:get/get.dart';
 
 class CustomChoiceChip extends StatefulWidget {
   final String label;
@@ -16,18 +18,24 @@ class CustomChoiceChip extends StatefulWidget {
 
 class _CustomChoiceChipState extends State<CustomChoiceChip>
     with SingleTickerProviderStateMixin {
-  late bool _selected;
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _selected = widget.selected;
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 200),
     );
-    if (_selected) _controller.value = 1.0;
+    if (widget.selected) _controller.value = 1.0;
+  }
+
+  @override
+  void didUpdateWidget(CustomChoiceChip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      widget.selected ? _controller.forward() : _controller.reverse();
+    }
   }
 
   @override
@@ -38,56 +46,62 @@ class _CustomChoiceChipState extends State<CustomChoiceChip>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selected = !_selected;
-          if (_selected)
-            _controller.forward();
-          else
-            _controller.reverse();
-        });
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          final t = _controller.value;
-          final color = Color.lerp(
-            Theme.of(context).colorScheme.surface,
-            Theme.of(context).colorScheme.primary.withOpacity(.22),
-            t,
-          )!;
-          final scale = 1.0 + (t * 0.04);
-          return Transform.scale(
-            scale: scale,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-                boxShadow: t > 0
-                    ? [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final t = _controller.value;
+
+        final backgroundColor = Color.lerp(
+          isDark ? Colors.grey[900] : theme.colorScheme.surface,
+          theme.colorScheme.primary.withOpacity(isDark ? 0.3 : 0.15),
+          t,
+        )!;
+
+        final textColor = Color.lerp(
+          isDark ? Colors.grey[400] : Colors.black87,
+          theme.colorScheme.primary,
+          t,
+        );
+
+        return Transform.scale(
+          scale: 1.0 + (t * 0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+              border: Border.all(
+                color: Color.lerp(
+                  isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                  theme.colorScheme.primary.withOpacity(0.5),
+                  t,
+                )!,
+                width: 1.2,
               ),
-              child: Text(
-                widget.label,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: t > 0.4
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
+              boxShadow: t > 0 && !isDark
+                  ? [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: Offset(0, 0.5.h),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Text(
+              widget.label.tr,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: textColor,
+                fontWeight: t > 0.5 ? FontWeight.bold : FontWeight.w500,
+                fontSize: 11.sp,
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

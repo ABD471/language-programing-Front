@@ -2,6 +2,7 @@ import 'package:apartment_rental_system/features/tenant/mybooking/controller/boo
 import 'package:apartment_rental_system/features/tenant/mybooking/widget/bookingSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   const BookingDetailsScreen({super.key});
@@ -9,146 +10,187 @@ class BookingDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BookingDetailsController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F6FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(
         () => CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 260,
+              expandedHeight: 30.h, // Resize: Height based on screen
               pinned: true,
+              iconTheme: IconThemeData(
+                color: isDark ? Colors.white : Colors.black,
+              ),
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(controller.apartment.title),
+                title: Text(
+                  controller.apartment.title.tr, // Translation
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 14.sp, // Resize
+                  ),
+                ),
+                // خلفية الصورة (مثال)
+                background: Image.network(
+                  controller.apartment.imageUrl.isNotEmpty
+                      ? controller.apartment.imageUrl
+                      : '',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
 
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(4.w), // Resize
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// حالة الحجز
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                        vertical: 0.8.h,
                       ),
                       decoration: BoxDecoration(
                         color: controller.statusColor.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        controller.booking.value.status.name,
+                        controller.booking.value.status.name.tr, // Translation
                         style: TextStyle(
                           color: controller.statusColor,
                           fontWeight: FontWeight.bold,
+                          fontSize: 10.sp, // Resize
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 2.h),
 
-                    /// التواريخ
                     _card(
+                      context,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _iconInfo(
+                            context,
                             Icons.calendar_today,
-                            'من',
+                            'from_date'.tr, // Translation
                             controller.startDate.toString().split(' ')[0],
                           ),
                           _iconInfo(
+                            context,
                             Icons.calendar_month,
-                            'إلى',
+                            'to_date'.tr, // Translation
                             controller.endDate.toString().split(' ')[0],
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 2.h),
 
                     /// تفاصيل الشقة
                     Text(
-                      'تفاصيل الشقة',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      'apartment_details'.tr, // Translation
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp, // Resize
+                      ),
                     ),
 
-                    const SizedBox(height: 8),
+                    SizedBox(height: 1.h),
 
                     _card(
+                      context,
                       child: Column(
                         children: [
                           _infoRow(
+                            context,
                             Icons.attach_money,
-                            'السعر',
-                            controller.apartment.price,
+                            'price'.tr, // Translation
+                            '${controller.apartment.price} ${'currency'.tr}',
                           ),
                           _infoRow(
+                            context,
                             Icons.bed,
-                            'غرف النوم',
+                            'bedrooms'.tr, // Translation
                             controller.apartment.bedrooms.toString(),
                           ),
                           _infoRow(
+                            context,
                             Icons.bathtub,
-                            'الحمامات',
+                            'bathrooms'.tr, // Translation
                             controller.apartment.bathrooms.toString(),
                           ),
                           _infoRow(
+                            context,
                             Icons.square_foot,
-                            'المساحة',
-                            '${controller.apartment.area} م²',
+                            'area'.tr, // Translation
+                            '${controller.apartment.area} ${'sqm'.tr}',
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: 4.h),
 
+                    /// الأزرار التفاعلية
                     Row(
                       children: [
                         Expanded(
                           child: Obx(
                             () => OutlinedButton(
                               onPressed: controller.isLoading.value
-                                  ? null // تعطيل الزر أثناء التحميل
-                                  : () async {
-                                      await controller.cancelBooking();
-                                    },
+                                  ? null
+                                  : () async =>
+                                        await controller.cancelBooking(),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.red,
                                 side: const BorderSide(color: Colors.red),
-                                padding: const EdgeInsets.all(14),
+                                padding: EdgeInsets.all(1.8.h), // Resize
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
                               child: controller.isLoading.value
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
+                                  ? SizedBox(
+                                      width: 5.w,
+                                      height: 5.w,
+                                      child: const CircularProgressIndicator(
                                         strokeWidth: 2,
                                         color: Colors.red,
                                       ),
                                     )
-                                  : const Text('إلغاء الحجز'),
+                                  : Text(
+                                      'cancel_booking'.tr,
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 3.w),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
                               Get.bottomSheet(
                                 BookingEditSheet(controller: controller),
                                 isScrollControlled: true,
+                                backgroundColor: Theme.of(context).cardColor,
                               );
                             },
-                            child: const Text('تعديل الحجز'),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(1.8.h), // Resize
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: Text(
+                              'edit_booking'.tr,
+                              style: TextStyle(fontSize: 12.sp),
+                            ),
                           ),
                         ),
                       ],
@@ -163,41 +205,81 @@ class BookingDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _card({required Widget child}) {
+  Widget _card(BuildContext context, {required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(4.w), // Resize
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 0.5.h), // Resize
+          ),
         ],
       ),
       child: child,
     );
   }
 
-  Widget _infoRow(IconData icon, String title, String value) {
+  Widget _infoRow(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String value,
+  ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 1.h), // Resize
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Icon(
+            icon,
+            color: Theme.of(context).primaryColor,
+            size: 2.5.h,
+          ), // Resize icon
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Theme.of(context).hintColor,
+                fontSize: 11.sp,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
+          ),
         ],
       ),
     );
   }
 
-  Widget _iconInfo(IconData icon, String title, String value) {
+  Widget _iconInfo(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String value,
+  ) {
     return Column(
       children: [
-        Icon(icon, color: Colors.blue),
-        const SizedBox(height: 6),
-        Text(title),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Icon(
+          icon,
+          color: Theme.of(context).primaryColor,
+          size: 3.h,
+        ), // Resize icon
+        SizedBox(height: 0.8.h),
+        Text(
+          title,
+          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 10.sp),
+        ),
+        Text(
+          value,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
+        ),
       ],
     );
   }

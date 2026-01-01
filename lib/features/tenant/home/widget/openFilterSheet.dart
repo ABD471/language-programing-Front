@@ -1,7 +1,7 @@
 import 'package:apartment_rental_system/features/tenant/home/widget/customChoiceChipState.dart';
-import 'package:apartment_rental_system/features/tenant/home/widget/parallaxApartmentCard.dart';
-import 'package:apartment_rental_system/main.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
+import 'package:get/get.dart';
 
 void openFilterSheet(
   BuildContext context, {
@@ -10,128 +10,192 @@ void openFilterSheet(
   required void Function() onPressedApply,
   required void Function(RangeValues value) onChanged,
 }) async {
+  final theme = Theme.of(context);
+  final isDark = theme.brightness == Brightness.dark;
+
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
+    transitionAnimationController: AnimationController(
+      vsync: Navigator.of(context),
+      duration: const Duration(milliseconds: 400),
+    ),
     builder: (context) {
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => Navigator.pop(context),
-        child: DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          minChildSize: 0.25,
-          maxChildSize: 0.92,
-          builder: (context, sc) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(28),
+      return DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, sc) {
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF1A1A1A)
+                  : theme.colorScheme.surface,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(4.h),
+              ), // Resize
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
                 ),
-              ),
-              padding: const EdgeInsets.all(18),
-              child: ListView(
-                controller: sc,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 50,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SizedBox(height: 1.5.h), // Resize
+                Container(
+                  width: 10.w, // Resize
+                  height: 0.5.h, // Resize
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    'تصفية النتائج',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    'نطاق السعر (ل.س)',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  RangeSlider(
-                    values: priceRange,
-                    min: priceRange.start,
-                    max: priceRange.end,
-                    divisions: 20,
-                    labels: RangeLabels(
-                      '${priceRange.start.round()}',
-                      '${priceRange.end.round()}',
-                    ),
-
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    onChanged: (RangeValues value) {
-                      onChanged(value);
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'حجم الشقة',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  Wrap(
-                    spacing: 8,
+                ),
+                Expanded(
+                  child: ListView(
+                    controller: sc,
+                    padding: EdgeInsets.all(6.w), // Resize
                     children: [
-                      CustomChoiceChip(label: '1 غرفة', selected: false),
-                      CustomChoiceChip(label: '2 غرفة', selected: false),
-                      CustomChoiceChip(label: '3 غرفة', selected: false),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            onPressedApply();
-                          },
-                          child: const Text('تطبيق'),
+                      Text(
+                        'filter_results'.tr, // Translation
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp, // Resize
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      OutlinedButton(
-                        onPressed: () {
-                          onPressedRest();
-                        },
-
-                        child: const Text('إعادة'),
+                      SizedBox(height: 3.h),
+                      _buildPriceSection(theme, priceRange, onChanged),
+                      SizedBox(height: 3.h),
+                      Text(
+                        'apartment_size'.tr, // Translation
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                      SizedBox(height: 1.5.h),
+                      _buildSizeChips(),
+                      SizedBox(height: 5.h),
+                      _buildActionButtons(
+                        context,
+                        theme,
+                        onPressedApply,
+                        onPressedRest,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'نتائج مشابهة',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 120,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 4,
-                      itemBuilder: (ctx, i) => Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: SizedBox(
-                          width: 200,
-                          child: ParallaxApartmentCard(
-                            apartment: dummyApartments[i],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       );
     },
+  );
+}
+
+Widget _buildPriceSection(
+  ThemeData theme,
+  RangeValues priceRange,
+  Function(RangeValues) onChanged,
+) {
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'price_range'.tr,
+            style: TextStyle(fontSize: 12.sp),
+          ), // Translation
+          Text(
+            '${priceRange.start.round()} - ${priceRange.end.round()} ${'currency'.tr}',
+            style: TextStyle(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 11.sp,
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 1.h),
+      RangeSlider(
+        values: priceRange,
+        min: 0,
+        max: 10000000,
+        divisions: 50,
+        activeColor: theme.colorScheme.primary,
+        inactiveColor: theme.colorScheme.primary.withOpacity(0.1),
+        onChanged: onChanged,
+      ),
+    ],
+  );
+}
+
+Widget _buildSizeChips() {
+  return Wrap(
+    spacing: 2.w, // Resize
+    runSpacing: 1.h, // Resize
+    children: [
+      CustomChoiceChip(label: 'studio'.tr, selected: false),
+      CustomChoiceChip(label: 'room_hall'.tr, selected: true),
+      CustomChoiceChip(label: 'two_rooms'.tr, selected: false),
+      CustomChoiceChip(label: 'three_rooms_plus'.tr, selected: false),
+    ],
+  );
+}
+
+Widget _buildActionButtons(
+  BuildContext context,
+  ThemeData theme,
+  VoidCallback onApply,
+  VoidCallback onReset,
+) {
+  return Row(
+    children: [
+      Expanded(
+        flex: 2,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 1.8.h), // Resize
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 0,
+          ),
+          onPressed: () {
+            onApply();
+            Navigator.pop(context);
+          },
+          child: Text(
+            'apply_filter'.tr, // Translation
+            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      SizedBox(width: 3.w),
+      Expanded(
+        flex: 1,
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.symmetric(vertical: 1.8.h), // Resize
+            side: BorderSide(color: theme.colorScheme.outline.withOpacity(0.5)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          onPressed: onReset,
+          child: Text(
+            'reset'.tr,
+            style: TextStyle(fontSize: 12.sp),
+          ), // Translation
+        ),
+      ),
+    ],
   );
 }

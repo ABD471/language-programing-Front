@@ -1,5 +1,6 @@
 import 'package:apartment_rental_system/theme/maintheme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AnimatedSearchBox extends StatefulWidget {
   final ValueChanged<String>? onChanged;
@@ -24,10 +25,7 @@ class _AnimatedSearchBoxState extends State<AnimatedSearchBox>
     );
 
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus)
-        _controller.forward();
-      else
-        _controller.reverse();
+      _focusNode.hasFocus ? _controller.forward() : _controller.reverse();
     });
   }
 
@@ -40,35 +38,75 @@ class _AnimatedSearchBoxState extends State<AnimatedSearchBox>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final scale = 1 + (_controller.value * 0.02);
-        return Transform.scale(scale: scale, child: child);
-      },
-      child: Material(
-        elevation: 0,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-        child: TextField(
-          focusNode: _focusNode,
-          onChanged: widget.onChanged,
-          decoration: InputDecoration(
-            hintText: 'ابحث عن مدينة، منطقة أو ميزة...',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => FocusScope.of(context).unfocus(),
-            ),
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            border: OutlineInputBorder(
+        return Transform.scale(
+          scale: 1 + (_controller.value * 0.015),
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-              borderSide: BorderSide.none,
+              boxShadow: [
+                BoxShadow(
+                  color: _focusNode.hasFocus
+                      ? theme.primaryColor.withOpacity(isDark ? 0.15 : 0.1)
+                      : Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                  blurRadius: _focusNode.hasFocus ? 15 : 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
+            child: child,
+          ),
+        );
+      },
+      child: TextField(
+        focusNode: _focusNode,
+        onChanged: widget.onChanged,
+        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
+        decoration: InputDecoration(
+          hintText: 'search_hint_detailed'.tr,
+          hintStyle: TextStyle(
+            color: theme.hintColor.withOpacity(0.5),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: _focusNode.hasFocus ? theme.primaryColor : theme.hintColor,
+          ),
+          suffixIcon: _focusNode.hasFocus
+              ? IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => _focusNode.unfocus(),
+                )
+              : null,
+          filled: true,
+          fillColor: isDark
+              ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
+              : theme.colorScheme.surface,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: 16,
+          ),
+          enabledBorder: _buildBorder(
+            isDark ? Colors.white10 : Colors.grey.shade200,
+          ),
+          focusedBorder: _buildBorder(
+            theme.primaryColor.withOpacity(0.5),
+            width: 1.5,
           ),
         ),
       ),
+    );
+  }
+
+  OutlineInputBorder _buildBorder(Color color, {double width = 1}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+      borderSide: BorderSide(color: color, width: width),
     );
   }
 }

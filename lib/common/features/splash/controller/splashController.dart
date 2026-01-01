@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:apartment_rental_system/features/tenant/settings/controller/editlang_theme_controller.dart';
+import 'package:apartment_rental_system/common/features/settings/controller/editlang_theme_controller.dart';
 import 'package:apartment_rental_system/main.dart';
 import 'package:apartment_rental_system/util/service/authservice.dart';
 import 'package:get/get.dart';
@@ -22,7 +22,7 @@ class SplashController extends GetxController {
       // ⛔ فحص إنترنت فعلي
       final hasInternet = await hasRealInternet();
       if (!hasInternet) {
-        //   throw Exception("NO_INTERNET");
+        throw Exception("NO_INTERNET");
       }
 
       // 2️⃣ تشغيل المهام معًا + Timeout شامل

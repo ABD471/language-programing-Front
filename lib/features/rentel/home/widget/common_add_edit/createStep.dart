@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 Step createStep({
   required int index,
@@ -10,7 +11,6 @@ Step createStep({
 }) {
   return Step(
     isActive: isActive ?? (controller.currentStep.value >= index),
-
     state:
         state ??
         (controller.currentStep.value > index
@@ -18,14 +18,12 @@ Step createStep({
             : (controller.currentStep.value == index
                   ? StepState.editing
                   : StepState.indexed)),
-
     title: Text(
       title,
-      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold),
     ),
-
     content: Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: 1.5.h),
       child: content,
     ),
   );

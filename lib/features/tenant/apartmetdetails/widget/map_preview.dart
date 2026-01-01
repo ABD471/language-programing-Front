@@ -4,9 +4,9 @@ import 'package:flutter_map/flutter_map.dart';
 
 import 'package:latlong2/latlong.dart';
 
-class MapPreview extends StatelessWidget {
-  final ApartmentDetailsController controller;
-  const MapPreview({super.key, required this.controller});
+class MapPreviewTest extends StatelessWidget {
+  final ApartmentDetailsControllerTest controller;
+  const MapPreviewTest({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class MapPreview extends StatelessWidget {
             child: SizedBox(
               height: 200,
               child: FlutterMap(
-                options: MapOptions(initialCenter: pos, initialZoom: 14),
+                options: MapOptions(initialCenter: pos, initialZoom: 8),
                 children: [
                   TileLayer(
                     urlTemplate:
@@ -32,11 +32,11 @@ class MapPreview extends StatelessWidget {
                         point: pos,
                         width: 48,
                         height: 48,
-                        child:  Icon(
+                        child: Icon(
                           Icons.location_on,
                           color: Colors.red,
                           size: 36,
-                        ), 
+                        ),
                       ),
                     ],
                   ),
@@ -50,7 +50,7 @@ class MapPreview extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    controller.apartment.location ?? 'الموقع غير متوفر',
+                    controller.apartment.address.city ?? 'الموقع غير متوفر',
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
 import 'package:apartment_rental_system/features/rentel/home/controller/rental_home_controller.dart';
-import 'package:apartment_rental_system/testuils/model/apartment.dart';
+import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +14,6 @@ class EditApartmentController extends GetxController {
   var currentStep = 0.obs;
   var isUpdating = false.obs;
 
-  // متغيرات الموقع والخريطة
   var pickedLocation = LatLng(33.5138, 36.2765).obs;
   var latitude = "33.5138".obs;
   var longitude = "36.2765".obs;
@@ -44,7 +43,6 @@ class EditApartmentController extends GetxController {
     super.onInit();
     apartment = Get.arguments;
 
-    // تهيئة الحقول ببيانات الشقة الحالية
     titleController = TextEditingController(text: apartment.title);
     descController = TextEditingController(text: apartment.description);
     priceController = TextEditingController(text: apartment.price);
@@ -56,7 +54,6 @@ class EditApartmentController extends GetxController {
     );
     areaController = TextEditingController(text: apartment.area.toString());
 
-    // تهيئة الموقع من بيانات السيرفر لفتح الخريطة عليه
     try {
       double lat = double.parse(apartment.address.latitude);
       double lng = double.parse(apartment.address.longitude);
@@ -71,7 +68,6 @@ class EditApartmentController extends GetxController {
     existingImages.value = apartment.images.map((e) => e.url).toList();
   }
 
-  // تحديث الموقع عند الضغط على الخريطة
   void updateLocation(LatLng position) {
     pickedLocation.value = position;
     latitude.value = position.latitude.toString();
@@ -89,7 +85,6 @@ class EditApartmentController extends GetxController {
     if (isNetwork) {
       existingImages.removeAt(index);
     } else {
-      // حساب الفهرس الصحيح للصور الجديدة المضافة
       selectedImages.removeAt(index - existingImages.length);
     }
   }
@@ -112,7 +107,6 @@ class EditApartmentController extends GetxController {
     try {
       isUpdating(true);
 
-      // تحضير الحقول المرسلة مع استخدام الإحداثيات الجديدة
       Map<String, String> fields = {
         "_method": "PUT",
         "title": titleController.text,
@@ -122,8 +116,8 @@ class EditApartmentController extends GetxController {
         "bathrooms": bathroomsController.text,
         "payment_information": "Cash",
         "area": areaController.text,
-        "longitude": longitude.value, // القيمة المحدثة من الخريطة
-        "latitude": latitude.value, // القيمة المحدثة من الخريطة
+        "longitude": longitude.value,
+        "latitude": latitude.value,
         "city": selectedCity.value,
       };
 
@@ -167,7 +161,6 @@ class EditApartmentController extends GetxController {
     }
   }
 
-  // دالة عرض التنبيهات بتصميم متناسق
   void _showStyledSnackbar({
     required String title,
     required String message,
