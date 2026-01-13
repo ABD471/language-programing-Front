@@ -1,4 +1,5 @@
 import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
+import 'package:apartment_rental_system/util/service/authservice.dart';
 import 'package:get/get.dart';
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
@@ -15,6 +16,7 @@ class HomeTestController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print(AuthService.token);
     loadApartmentsFromServer();
   }
 
@@ -70,17 +72,7 @@ class HomeTestController extends GetxController {
             selectedCity.value == 'الكل' ||
             a.address.city == selectedCity.value;
 
-        final priceValue = double.tryParse(a.price) ?? 0;
-        final withinPrice =
-            priceValue >= priceRange.value.start &&
-            priceValue <= priceRange.value.end;
-
-        final matchesSearch =
-            searchQuery.value.isEmpty ||
-            a.title.contains(searchQuery.value) ||
-            a.address.city.contains(searchQuery.value);
-
-        return matchesCity && withinPrice && matchesSearch;
+        return matchesCity;
       }).toList(),
     );
   }
@@ -109,7 +101,7 @@ class HomeTestController extends GetxController {
 
   List<String> get availableCities {
     final set = apartments.map((a) => a.address.city).toSet();
-    return ['الكل', ...set];
+    return [...set];
   }
 
   void toDetiles(ApartmentTest apt) {

@@ -14,6 +14,7 @@ import 'package:apartment_rental_system/common/features/auth/screen/login.dart';
 import 'package:apartment_rental_system/common/features/auth/screen/newPassword.dart';
 import 'package:apartment_rental_system/common/features/auth/screen/registerAccount.dart';
 import 'package:apartment_rental_system/common/features/auth/screen/registerpersonalInf.dart';
+import 'package:apartment_rental_system/features/tenant/favorite/screen/FavoriteScreen.dart';
 import 'package:apartment_rental_system/features/tenant/mainwrapper/screen/mainwrapper.dart';
 import 'package:apartment_rental_system/common/screen/verfiy_otp_email_page.dart';
 import 'package:apartment_rental_system/features/tenant/mybooking/screen/booking_details_page.dart';
@@ -49,7 +50,7 @@ List<GetPage<dynamic>>? routes = [
     page: () => const RentalMainWrapper(),
     middlewares: [AuthMiddleware()],
     binding: BindingsBuilder(() {
-      Get.put(NotificationController()); 
+      Get.put(NotificationController());
     }),
   ),
 
@@ -151,4 +152,5 @@ List<GetPage<dynamic>>? routes = [
       Get.put(ChatBoxController());
     }),
   ),
+  GetPage(name: '/favoriteScreen', page: () => FavoriteScreen()),
 ];

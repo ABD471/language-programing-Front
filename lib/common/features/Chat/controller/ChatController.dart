@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:apartment_rental_system/common/features/Chat/model/messageModel.dart';
+import 'package:apartment_rental_system/common/features/Chat/controller/chat_box_controller.dart'; // تأكد من استيراد الكنترولر الأساسي
 import 'package:apartment_rental_system/util/service/pusherService.dart';
 import 'package:get/get.dart';
 import 'package:apartment_rental_system/api/apiService.dart';
@@ -24,8 +25,8 @@ class ChatController extends GetxController {
 
   void _setupConnectivityListener() {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
-      results,
-    ) {
+        results,
+        ) {
       if (results.isNotEmpty && results.first != ConnectivityResult.none) {
         _retryFailedMessages();
       }
@@ -40,17 +41,15 @@ class ChatController extends GetxController {
     }
   }
 
- 
+  // 🛠 التعديل هنا: مسح العداد عند تهيئة قنوات البوشر
   void setupChatStreams(int currentUserId, int receiverId) async {
     await _pusherService.connectPusher();
     await _pusherEventSubscription?.cancel();
 
-    print(
-      "🎧 [LISTEN] Chat Active for User: $currentUserId -> Receiver: $receiverId",
-    );
+    // مسح العداد من القائمة الرئيسية فور الدخول
+    _resetUnreadCountInList(receiverId);
 
     _pusherEventSubscription = _pusherService.eventStream.listen((event) {
-      
       final dynamic rawEventData = event.data is String
           ? jsonDecode(event.data)
           : event.data;
@@ -60,24 +59,17 @@ class ChatController extends GetxController {
         _handlePresenceEvents(event.eventName, rawData, receiverId);
       }
 
-     
       if (event.channelName == "private-chat.$currentUserId") {
-     
         if (event.eventName == "MessageSent") {
           _handleIncomingMessage(rawData, currentUserId, receiverId);
-        }
-       
-        else if (event.eventName == "messages.read" ||
+        } else if (event.eventName == "messages.read" ||
             event.eventName == "MessageSeen") {
-          print("👀 [EVENT] Messages were read by the other user.");
           _handleMessageReadEvent(receiverId);
         }
       }
     });
 
-   
     try {
-     
       await _pusherService.pusher.unsubscribe(
         channelName: "presence-chatonline.$receiverId",
       );
@@ -85,24 +77,41 @@ class ChatController extends GetxController {
         "presence-chatonline.$receiverId",
       );
 
-      
       String myPrivateChannel = "private-chat.$currentUserId";
       await _pusherService.pusher.unsubscribe(channelName: myPrivateChannel);
       await _pusherService.subscribeToChannel(myPrivateChannel);
     } catch (e) {
-      print("🚨 [SUB ERROR] Exception during subscription: $e");
+      print("🚨 [SUB ERROR] Exception: $e");
     }
   }
 
- 
+  // دالة مخصصة لمسح العداد في الكنترولر الرئيسي
+  void _resetUnreadCountInList(int receiverId) {
+    try {
+      if (Get.isRegistered<ChatBoxController>()) {
+        final boxController = Get.find<ChatBoxController>();
+        int index = boxController.conversations.indexWhere(
+              (c) => c.otherUser?['id'] == receiverId,
+        );
+
+        if (index != -1) {
+          boxController.conversations[index].unreadCount = 0;
+          boxController.conversations.refresh();
+          print("🧹 [UI] Unread count reset for user: $receiverId");
+        }
+      }
+    } catch (e) {
+      print("🚨 Error resetting unread count: $e");
+    }
+  }
+
   void _handleIncomingMessage(
-    Map<String, dynamic> rawData,
-    int currentUserId,
-    int receiverId,
-  ) {
+      Map<String, dynamic> rawData,
+      int currentUserId,
+      int receiverId,
+      ) {
     try {
       Map<String, dynamic> finalMessageMap;
-     
       if (rawData.containsKey('message') && rawData['message'] is Map) {
         finalMessageMap = Map<String, dynamic>.from(rawData['message']);
       } else {
@@ -111,26 +120,23 @@ class ChatController extends GetxController {
 
       var newMessage = MessageModel.fromJson(finalMessageMap);
 
-     
       bool belongsToChat =
           (newMessage.senderId == receiverId &&
               newMessage.receiverId == currentUserId) ||
-          (newMessage.senderId == currentUserId &&
-              newMessage.receiverId == receiverId);
+              (newMessage.senderId == currentUserId &&
+                  newMessage.receiverId == receiverId);
 
       if (belongsToChat) {
         int existingIndex = messages.indexWhere((m) => m.id == newMessage.id);
-
         if (existingIndex == -1) {
-         
           if (newMessage.senderId != currentUserId) {
             newMessage.isMe = false;
             messages.add(newMessage);
-          
             markMessagesAsRead(receiverId);
+            // بما أننا داخل المحادثة، نضمن بقاء العداد صفراً في القائمة الرئيسية
+            _resetUnreadCountInList(receiverId);
           }
         } else {
-         
           messages[existingIndex].status = 1;
         }
         messages.refresh();
@@ -140,24 +146,20 @@ class ChatController extends GetxController {
     }
   }
 
-
   void _handleMessageReadEvent(int receiverId) {
-   
     bool updated = false;
     for (var msg in messages) {
       if (msg.isMe == true && msg.receiverId == receiverId && msg.status != 2) {
-        msg.status = 2; 
+        msg.status = 2;
         updated = true;
       }
     }
     if (updated) {
       messages.refresh();
-      print("✅ [UI UPDATE] Blue ticks activated!");
     }
   }
 
   void _handlePresenceEvents(String eventName, dynamic data, int receiverId) {
-  
     try {
       if (eventName == "pusher:subscription_succeeded") {
         final Map<String, dynamic> pData = data is String
@@ -168,19 +170,10 @@ class ChatController extends GetxController {
             .map((e) => e.toString())
             .contains(receiverId.toString());
       } else if (eventName == "pusher:member_added") {
-  
-        final id =
-            (data is Map
-                    ? (data['user_id'] ?? data['id'])
-                    : jsonDecode(data)['user_id'])
-                .toString();
+        final id = (data is Map ? (data['user_id'] ?? data['id']) : jsonDecode(data)['user_id']).toString();
         if (id == receiverId.toString()) isOnline.value = true;
       } else if (eventName == "pusher:member_removed") {
-        final id =
-            (data is Map
-                    ? (data['user_id'] ?? data['id'])
-                    : jsonDecode(data)['user_id'])
-                .toString();
+        final id = (data is Map ? (data['user_id'] ?? data['id']) : jsonDecode(data)['user_id']).toString();
         if (id == receiverId.toString()) isOnline.value = false;
       }
     } catch (e) {
@@ -188,11 +181,7 @@ class ChatController extends GetxController {
     }
   }
 
-  Future<void> sendMessage(
-    int receiverId,
-    String text,
-    int currentUserId,
-  ) async {
+  Future<void> sendMessage(int receiverId, String text, int currentUserId) async {
     if (text.trim().isEmpty) return;
     final tempMsg = MessageModel(
       id: DateTime.now().millisecondsSinceEpoch,
@@ -200,7 +189,7 @@ class ChatController extends GetxController {
       receiverId: receiverId,
       message: text,
       createdAt: DateTime.now().toIso8601String(),
-      status: 0, // 0 = Sending
+      status: 0,
       isMe: true,
       isFailed: false,
     );
@@ -213,7 +202,7 @@ class ChatController extends GetxController {
         useAuth: true,
       );
       if (response["statusCode"] == 200) {
-        tempMsg.status = 1; // 1 = Sent/Delivered
+        tempMsg.status = 1;
         tempMsg.isFailed = false;
         if (response['body']?['body'] != null) {
           var realMsg = MessageModel.fromJson(response['body']['body']);
@@ -262,6 +251,11 @@ class ChatController extends GetxController {
             return m;
           }).toList(),
         );
+
+        // بعد جلب الرسائل بنجاح، نخبر السيرفر أننا قرأناها
+        markMessagesAsRead(receiverId);
+        // وتصفير العداد في القائمة الرئيسية
+        _resetUnreadCountInList(receiverId);
       }
     } finally {
       isLoading.value = false;
@@ -275,7 +269,6 @@ class ChatController extends GetxController {
         payload: {'sender_id': senderId},
         useAuth: true,
       );
-     
     } catch (_) {}
   }
 

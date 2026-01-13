@@ -18,7 +18,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // استخدام tag فريد لتجنب تداخل البيانات عند فتح أكثر من شقة
+   
     final ctrl = Get.put(
       ApartmentDetailsControllerTest(apartment),
       tag: apartment.id.toString(),
@@ -29,7 +29,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      // لجعل المحتوى يمتد خلف الـ StatusBar لجمالية أكثر للصور
+     
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,

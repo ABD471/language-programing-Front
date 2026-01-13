@@ -137,64 +137,64 @@ class BookingDetailsScreen extends StatelessWidget {
 
                     SizedBox(height: 4.h),
 
-                    /// الأزرار التفاعلية
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Obx(
-                            () => OutlinedButton(
-                              onPressed: controller.isLoading.value
-                                  ? null
-                                  : () async =>
-                                        await controller.cancelBooking(),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                side: const BorderSide(color: Colors.red),
-                                padding: EdgeInsets.all(1.8.h), // Resize
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: controller.isLoading.value
-                                  ? SizedBox(
-                                      width: 5.w,
-                                      height: 5.w,
-                                      child: const CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.red,
-                                      ),
-                                    )
-                                  : Text(
-                                      'cancel_booking'.tr,
-                                      style: TextStyle(fontSize: 12.sp),
-                                    ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 3.w),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.bottomSheet(
-                                BookingEditSheet(controller: controller),
-                                isScrollControlled: true,
-                                backgroundColor: Theme.of(context).cardColor,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.all(1.8.h), // Resize
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: Text(
-                              'edit_booking'.tr,
-                              style: TextStyle(fontSize: 12.sp),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // /// الأزرار التفاعلية
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Obx(
+                    //         () => OutlinedButton(
+                    //           onPressed: controller.isLoading.value
+                    //               ? null
+                    //               : () async =>
+                    //                     await controller.cancelBooking(),
+                    //           style: OutlinedButton.styleFrom(
+                    //             foregroundColor: Colors.red,
+                    //             side: const BorderSide(color: Colors.red),
+                    //             padding: EdgeInsets.all(1.8.h), // Resize
+                    //             shape: RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(14),
+                    //             ),
+                    //           ),
+                    //           child: controller.isLoading.value
+                    //               ? SizedBox(
+                    //                   width: 5.w,
+                    //                   height: 5.w,
+                    //                   child: const CircularProgressIndicator(
+                    //                     strokeWidth: 2,
+                    //                     color: Colors.red,
+                    //                   ),
+                    //                 )
+                    //               : Text(
+                    //                   'cancel_booking'.tr,
+                    //                   style: TextStyle(fontSize: 12.sp),
+                    //                 ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     SizedBox(width: 3.w),
+                    //     Expanded(
+                    //       child: ElevatedButton(
+                    //         onPressed: () {
+                    //           Get.bottomSheet(
+                    //             BookingEditSheet(controller: controller),
+                    //             isScrollControlled: true,
+                    //             backgroundColor: Theme.of(context).cardColor,
+                    //           );
+                    //         },
+                    //         style: ElevatedButton.styleFrom(
+                    //           padding: EdgeInsets.all(1.8.h), // Resize
+                    //           shape: RoundedRectangleBorder(
+                    //             borderRadius: BorderRadius.circular(14),
+                    //           ),
+                    //         ),
+                    //         child: Text(
+                    //           'edit_booking'.tr,
+                    //           style: TextStyle(fontSize: 12.sp),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

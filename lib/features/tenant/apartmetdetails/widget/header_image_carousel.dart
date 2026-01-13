@@ -1,4 +1,3 @@
-
 import 'package:apartment_rental_system/features/tenant/apartmetdetails/widget/full_screen_gallery.dart';
 import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
 import 'package:cached_network_image/cached_network_image.dart';

@@ -124,14 +124,12 @@ class ApartmentDetailsControllerTest extends GetxController {
     isloading.value = true;
 
     try {
-      // -------------------------
-      // تحويل التواريخ للـ Backend بصيغة yyyy-MM-dd
-      // -------------------------
+    
       String formatDate(DateTime date) =>
           "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
       print(formatDate(selectedDateRange.value!.start));
       final Map<String, dynamic> payload = {
-        "apartment_id": apartment.id, // رقم الشقة
+        "apartment_id": apartment.id, 
         "start_date": formatDate(selectedDateRange.value!.start),
         "end_date": formatDate(selectedDateRange.value!.end),
       };

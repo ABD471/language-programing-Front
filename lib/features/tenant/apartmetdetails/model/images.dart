@@ -5,6 +5,16 @@ class ApartmentImage {
   ApartmentImage({required this.id, required this.url});
 
   factory ApartmentImage.fromJson(Map<String, dynamic> json) {
-    return ApartmentImage(id: json['id'] ?? 0, url: json['image'] ?? '');
+    return ApartmentImage(
+      id: json['id'] ?? 0,
+      url: json['image'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'image': url, 
+    };
   }
 }

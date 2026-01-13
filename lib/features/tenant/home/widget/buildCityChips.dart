@@ -40,7 +40,7 @@ class CityChipsTest extends StatelessWidget {
               label: Text(city),
               selected: isSelected,
               onSelected: (_) =>
-                  controller.changeCity(city == allText ? "" : city),
+                  controller.changeCity(city == allText ? "الكل" : city),
               labelStyle: TextStyle(
                 color: isSelected
                     ? Colors.white

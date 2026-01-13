@@ -25,4 +25,16 @@ class Owner {
       isVerified: json['is_verified'] ?? false,
     );
   }
+
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'phone': phone,
+      'email': email,
+      'role': role,
+      'status': status,
+      'is_verified': isVerified, 
+    };
+  }
 }

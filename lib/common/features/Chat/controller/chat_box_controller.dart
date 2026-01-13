@@ -20,19 +20,25 @@ class ChatBoxController extends GetxController {
   }
 
   void _initializeController() async {
+    // 1. جلب القائمة أولاً
     await getChatList();
+    // 2. الاستماع لتحديثات الأونلاين (الـ Stream)
     _listenToOnlineStatus();
+    // 3. ربط Pusher والاشتراك في القنوات
     _listenToPusherUpdates();
   }
 
   void _listenToOnlineStatus() {
     _pusherService.onlineUsersStream.listen((users) {
+      print("👥 Received online users list: $users");
       onlineUserIds.assignAll(users);
+
+      // تحديث حالة كل محادثة بناءً على القائمة الجديدة
       for (var chat in conversations) {
         if (chat.otherUser != null) {
-          chat.isOnline = onlineUserIds.contains(
-            chat.otherUser!['id'].toString(),
-          );
+          String otherId = chat.otherUser!['id'].toString();
+          chat.isOnline = onlineUserIds.contains(otherId);
+          print("🔍 Checking User $otherId: isOnline = ${chat.isOnline}");
         }
       }
       conversations.refresh();
@@ -41,31 +47,31 @@ class ChatBoxController extends GetxController {
 
   void _listenToPusherUpdates() async {
     if (AuthService.userId == null) return;
-    int currentUserId = int.parse(AuthService.userId!);
+    String currentUserId = AuthService.userId!;
 
     await _pusherService.connectPusher();
+
+    // 🔵 القناة الخاصة بالرسائل
     await _pusherService.subscribeToChannel("private-chat.$currentUserId");
+
+    // 🟢 التعديل المهم: الاشتراك في قناة الـ Presence لمراقبة المتصلين
+    // ملاحظة: تأكد أن اسم القناة يطابق ما هو موجود في Laravel (مثلاً chat-online)
+    await _pusherService.subscribeToChannel("presence-chatonline.$currentUserId");
 
     _pusherService.eventStream.listen((event) {
       if (event.eventName == "MessageSent") {
         try {
-       
           final dynamic decoded = event.data is String
               ? jsonDecode(event.data)
               : event.data;
-          
-          final Map<String, dynamic> incomingData = Map<String, dynamic>.from(decoded);
 
-   
+          final Map<String, dynamic> incomingData = Map<String, dynamic>.from(decoded);
           Map<String, dynamic> messageMap;
 
-       
           if (incomingData['message'] is Map) {
-             messageMap = Map<String, dynamic>.from(incomingData['message']);
-          } 
-         
-          else {
-             messageMap = incomingData;
+            messageMap = Map<String, dynamic>.from(incomingData['message']);
+          } else {
+            messageMap = incomingData;
           }
 
           var newMessage = MessageModel.fromJson(messageMap);
@@ -79,8 +85,8 @@ class ChatBoxController extends GetxController {
 
   void _handleIncomingMessage(MessageModel newMessage) {
     int index = conversations.indexWhere(
-      (c) =>
-          c.otherUser?['id'] == newMessage.senderId ||
+          (c) =>
+      c.otherUser?['id'] == newMessage.senderId ||
           c.otherUser?['id'] == newMessage.receiverId,
     );
 
@@ -97,6 +103,7 @@ class ChatBoxController extends GetxController {
       conversations.insert(0, chat);
       conversations.refresh();
     } else {
+      // إذا كانت محادثة جديدة تماماً، نحدث القائمة من السيرفر
       getChatList();
     }
   }
@@ -112,6 +119,7 @@ class ChatBoxController extends GetxController {
         List data = response['body']["body"];
         var fetchedChats = data.map((e) => MessageModel.fromJson(e)).toList();
 
+        // فحص الحالة الابتدائية عند جلب القائمة
         for (var chat in fetchedChats) {
           if (chat.otherUser != null) {
             chat.isOnline = onlineUserIds.contains(

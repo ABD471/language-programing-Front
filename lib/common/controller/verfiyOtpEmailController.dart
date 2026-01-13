@@ -125,10 +125,12 @@ class VerifyOtpEmailController extends GetxController {
                   body["token"],
                   body["data"]["role"],
                   body["data"]["id"].toString(),
-                  
                 );
                 await saveFcmToken();
+              
                 if (body["data"]["role"] == "rental") {
+                  print("rental logged in");
+
                   Get.offAllNamed("/rentel-mainwrapper");
                 } else if (body["data"]["role"] == "tenant") {
                   Get.offAllNamed("/mainwrapper");

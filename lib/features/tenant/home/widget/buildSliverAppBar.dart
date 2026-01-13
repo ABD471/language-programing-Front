@@ -30,6 +30,7 @@ Widget buildSliverAppBar() {
                 left: 4.w,
                 child: _buildNotificationButton(),
               ),
+              Positioned(top: 5.h, right: 4.w, child: _buildFavoriteButton()),
               Positioned(
                 left: 5.w,
                 right: 5.w,
@@ -85,16 +86,16 @@ Widget _buildHeaderContent(BuildContext context) {
         'welcome_user'.trParams({'name': 'أحمد'}),
         style: TextStyle(
           color: Colors.white.withOpacity(0.85),
-          fontSize: 11.sp, 
+          fontSize: 11.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
       SizedBox(height: 0.5.h),
       Text(
-        'search_next_apartment'.tr, 
+        'search_next_apartment'.tr,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 18.sp, 
+          fontSize: 18.sp,
           fontWeight: FontWeight.bold,
           letterSpacing: -0.5,
         ),
@@ -129,6 +130,7 @@ Widget _buildNotificationButton() {
               ),
               onPressed: () => Get.toNamed('/notificationScreen'),
             ),
+
             Positioned(
               right: 1.2.h,
               top: 1.2.h,
@@ -143,6 +145,32 @@ Widget _buildNotificationButton() {
               ),
             ),
           ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildFavoriteButton() {
+  return ClipOval(
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: Container(
+        height: 5.h,
+        width: 5.h,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
+        ),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.favorite_rounded,
+            color: const Color.fromARGB(255, 153, 0, 0),
+            size: 2.8.h,
+          ),
+          onPressed: () => Get.toNamed('/favoriteScreen'),
         ),
       ),
     ),
@@ -164,7 +192,7 @@ Widget _buildLocationTag() {
         SizedBox(width: 2.w),
         Obx(
           () => Text(
-            '${'your_location'.tr}: ${locationCtrl.city.value}', 
+            '${'your_location'.tr}: ${locationCtrl.city.value}',
             style: TextStyle(
               color: Colors.white,
               fontSize: 9.sp,

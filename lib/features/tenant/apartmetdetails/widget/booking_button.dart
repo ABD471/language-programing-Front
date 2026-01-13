@@ -19,30 +19,6 @@ class BookingButtonTest extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Row(
           children: [
-            Container(
-              width: 58,
-              height: 58,
-              decoration: BoxDecoration(
-                color: isDark ? theme.cardColor : Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                border: isDark ? Border.all(color: Colors.white10) : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? Colors.black26
-                        : Colors.grey.withOpacity(0.3),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: IconButton(
-                onPressed: () => Get.snackbar('مفضلة', 'تم إضافة للمفضلة'),
-                icon: const Icon(
-                  Icons.star_border_rounded,
-                  color: Colors.amber,
-                ),
-              ),
-            ),
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton(

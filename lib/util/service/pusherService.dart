@@ -21,143 +21,100 @@ class PusherService {
   Stream<PusherEvent> get eventStream => _eventController.stream;
 
   Future<void> connectPusher() async {
-    print(
-      "🎬 [STEP 1] Entering connectPusher. Current Status: isConnected=$_isConnected",
-    );
-
-    if (_isConnected) {
-      print("ℹ️ Pusher already connected, skipping.");
-      return;
-    }
+    if (_isConnected) return;
 
     try {
-      print("🚀 [STEP 2] Starting pusher.init...");
       await pusher.init(
         apiKey: "5f24808f978cdd988fc8",
         cluster: "us2",
-        useTLS: false, // HTTP
+        useTLS: false,
         authEndpoint: "${serverurl}/broadcasting/auth",
         onAuthorizer: _onAuthorizer,
 
         onEvent: (event) {
-          print(
-            "📡 [EVENT] Incoming: ${event.eventName} on ${event.channelName}",
-          );
           _eventController.add(event);
         },
 
         onSubscriptionSucceeded: (channelName, data) {
-          print("✅ [SUCCESS] Subscribed to: $channelName");
-          _eventController.add(
-            PusherEvent(
-              channelName: channelName,
-              eventName: "pusher:subscription_succeeded",
-              data: data,
-            ),
-          );
-          if (channelName.startsWith("presence-")) _handlePresenceUpdate(data);
+          print("✅ Subscribed to: $channelName");
+          if (channelName.startsWith("presence-")) {
+            _handlePresenceUpdate(data);
+          }
         },
 
+        // 🛠 التعديل الجوهري هنا: تحديث القائمة عند دخول مستخدم جديد
         onMemberAdded: (channelName, member) {
-          print("👤 [MEMBER] Added: ${member.userId}");
-          _eventController.add(
-            PusherEvent(
-              channelName: channelName,
-              eventName: "pusher:member_added",
-              data: {"user_id": member.userId},
-            ),
-          );
+          print("👤 Member Added: ${member.userId}");
+          if (!activeUsers.contains(member.userId.toString())) {
+            activeUsers.add(member.userId.toString());
+            _onlineUsersController.add(List.from(activeUsers)); // إرسال التحديث للـ Stream
+          }
+        },
+
+        // 🛠 التعديل الجوهري هنا: تحديث القائمة عند خروج مستخدم
+        onMemberRemoved: (channelName, member) {
+          print("🚫 Member Removed: ${member.userId}");
+          activeUsers.remove(member.userId.toString());
+          _onlineUsersController.add(List.from(activeUsers)); // إرسال التحديث للـ Stream
         },
 
         onError: (message, code, error) {
-          print("❌ [PUSHER ERROR] Message: $message, Code: $code");
-        },
-
-        onConnectionStateChange: (currentState, previousState) {
-          print("🔄 [STATE] Changed from $previousState to $currentState");
+          print("❌ Pusher Error: $message");
         },
       );
-      print("✅ [STEP 3] pusher.init completed.");
 
-      print("🔌 [STEP 4] Attempting pusher.connect()...");
       await pusher.connect();
       _isConnected = true;
-      print("🟢 [STEP 5] pusher.connect() called successfully.");
     } catch (e) {
-      print("🔴 [CRITICAL] Connection Error in connectPusher: $e");
+      print("🔴 Connection Error: $e");
     }
   }
 
   Future<void> subscribeToChannel(String channelName) async {
-    print("⏳ [SUB] Starting subscription request for: $channelName");
     try {
       await pusher.subscribe(channelName: channelName);
-      print("📤 [SUB] Request for $channelName sent to native plugin.");
     } catch (e) {
-      print("🔴 [SUB ERROR] Failed to subscribe to $channelName: $e");
+      print("🔴 Subscription Error: $e");
     }
   }
 
-  Future<dynamic> _onAuthorizer(
-    String channelName,
-    String socketId,
-    dynamic options,
-  ) async {
-    print("🔑 [AUTH] Authorizer Triggered for $channelName");
-    print("🔑 [AUTH] Socket ID: $socketId");
-    print(
-      "🔑 [AUTH] Using Token: ${AuthService.token != null ? 'Token Exists' : 'TOKEN IS NULL!'}",
-    );
-    print("[Auth token :] ${AuthService.token}");
-
+  Future<dynamic> _onAuthorizer(String channelName, String socketId, dynamic options) async {
     try {
-      print("🌐 [AUTH] Sending POST request to Laravel...");
-      var response = await http
-          .post(
-            Uri.parse("$serverurl/broadcasting/auth"),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ${AuthService.token}',
-              'Accept': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-              'X-Socket-ID': socketId,
-            },
-            body: jsonEncode({
-              'socket_id': socketId,
-              'channel_name': channelName,
-            }),
-          )
-          .timeout(const Duration(seconds: 20));
-
-      print("🌐 [AUTH] Laravel Response Code: ${response.statusCode}");
-      print("🌐 [AUTH] Laravel Response Body: ${response.body}");
+      var response = await http.post(
+        Uri.parse("$serverurl/broadcasting/auth"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${AuthService.token}',
+          'Accept': 'application/json',
+          'X-Socket-ID': socketId,
+        },
+        body: jsonEncode({
+          'socket_id': socketId,
+          'channel_name': channelName,
+        }),
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("✅ [AUTH] Authorization successful.");
         return jsonDecode(response.body);
-      } else {
-        print("⚠️ [AUTH] Failed with status ${response.statusCode}");
-        return null;
       }
+      return null;
     } catch (e) {
-      print("🚨 [AUTH EXCEPTION] Error during HTTP Auth: $e");
       return null;
     }
   }
 
   void _handlePresenceUpdate(dynamic data) {
-    print("👥 [PRESENCE] Updating active users list...");
     try {
       final decoded = data is String ? jsonDecode(data) : data;
+      // تأكد من مسار البيانات القادم من Laravel/Pusher
       if (decoded['presence']?['ids'] != null) {
         activeUsers = List<String>.from(
           decoded['presence']['ids'].map((id) => id.toString()),
         );
         _onlineUsersController.add(activeUsers);
-        print("👥 [PRESENCE] Current Online Users: $activeUsers");
       }
     } catch (e) {
-      print("📝 [PRESENCE ERROR] Parsing failed: $e");
+      print("📝 Presence Parsing failed: $e");
     }
   }
 }

@@ -33,7 +33,7 @@ class ApartmentListWithShimmerTest extends StatelessWidget {
         delegate: SliverChildBuilderDelegate((context, index) {
           final apt = controller.filtered[index];
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
             child: ParallaxApartmentCardTest(
               apartment: apt,
               onTap: () => onTap?.call(apt),

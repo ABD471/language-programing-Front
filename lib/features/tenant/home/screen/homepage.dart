@@ -1,9 +1,10 @@
+import 'package:apartment_rental_system/features/tenant/home/widget/buildCityChips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
 import 'package:apartment_rental_system/features/tenant/home/widget/apartmentListWithShimmer.dart';
-import 'package:apartment_rental_system/features/tenant/home/widget/buildCityChips.dart';
+
 import 'package:apartment_rental_system/features/tenant/home/controller/homeController.dart';
 import 'package:apartment_rental_system/features/tenant/home/widget/skeletonCard.dart';
 import 'package:apartment_rental_system/features/tenant/home/widget/openFilterSheet.dart';
@@ -99,7 +100,7 @@ class _HomeScreenState extends State<HomeTest> with TickerProviderStateMixin {
                   );
                 }
                 return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   sliver: ApartmentListWithShimmerTest(
                     controller: controller,
                     onTap: (apt) => controller.toDetiles(apt),

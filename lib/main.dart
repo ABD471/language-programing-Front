@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:apartment_rental_system/common/features/Notification/controller/notificationController.dart';
 import 'package:apartment_rental_system/common/features/settings/controller/editlang_theme_controller.dart';
+import 'package:apartment_rental_system/features/tenant/favorite/controller/FavoriteController.dart';
 import 'package:apartment_rental_system/helper/const/route.dart';
 import 'package:apartment_rental_system/localization/translate.dart';
 import 'package:apartment_rental_system/util/service/authservice.dart';
@@ -31,12 +32,13 @@ Future<void> main() async {
   sharedPreferences = await SharedPreferences.getInstance();
   final Settings = Get.put(EditlangThemeController(), permanent: true);
   await Settings.load();
-  Get.put(NotificationController(), permanent: true);
+  Get.put(NotificationController());
   await Get.putAsync<NotificationService>(
     () async => await NotificationService().init(),
   );
   locationCtrl = Get.put(LocationController());
   Get.put(PusherService(), permanent: true);
+  Get.put(FavoriteController());
   runApp(const RentApp());
 }
 
@@ -59,7 +61,6 @@ class RentApp extends StatelessWidget {
                 ? ThemeMode.dark
                 : ThemeMode.light,
             locale: Locale(settings.language.value),
-            
 
             translations: Translate(),
             builder: (context, child) {

@@ -16,6 +16,10 @@ class ApartmentTest {
   List<ApartmentImage> images;
   final Owner owner;
 
+  // الحقول الجديدة التي تمت إضافتها
+  final double averageRating;
+  final int reviewsCount;
+
   ApartmentTest({
     required this.id,
     required this.title,
@@ -29,6 +33,9 @@ class ApartmentTest {
     required this.address,
     required this.images,
     required this.owner,
+    // إضافة الحقول الجديدة هنا
+    required this.averageRating,
+    required this.reviewsCount,
   });
 
   factory ApartmentTest.fromJson(Map<String, dynamic> json) {
@@ -47,6 +54,33 @@ class ApartmentTest {
           .map((e) => ApartmentImage.fromJson(e))
           .toList(),
       owner: Owner.fromJson(json['owner'] ?? {}),
+
+      // قراءة الحقول الجديدة من الـ JSON الذي أرسلته من Laravel
+      // استخدمنا tryParse لضمان عدم حدوث Crash إذا كانت القيمة null أو String
+      averageRating:
+          double.tryParse(json['average_rating']?.toString() ?? '0') ?? 0.0,
+      reviewsCount: int.tryParse(json['reviews_count']?.toString() ?? '0') ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'payment_information': paymentInformation,
+      'price': price,
+      'bedrooms': bedrooms,
+      'bathrooms': bathrooms,
+      'area': area,
+      'owner_id': ownerId,
+      'address': address.toJson(),
+      'images': images.map((e) => e.toJson()).toList(),
+      'owner': owner.toJson(),
+
+      // إضافة الحقول الجديدة للتحويل إلى Json أيضاً
+      'average_rating': averageRating,
+      'reviews_count': reviewsCount,
+    };
   }
 }

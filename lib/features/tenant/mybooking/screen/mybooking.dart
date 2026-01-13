@@ -14,7 +14,6 @@ class MyBookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final appBarColor = isDark ? Colors.grey[900] : const Color(0xFF2196F3);
     final surfaceColor = isDark
@@ -28,19 +27,11 @@ class MyBookingsScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: appBarColor,
-          centerTitle: true,
-          title: Text(
-            'my_bookings'.tr,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-            ),
-          ),
+
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(8.h),
+            preferredSize: Size.fromHeight(2.h),
             child: Container(
-              margin: EdgeInsets.only(bottom: 1.h, left: 4.w, right: 4.w),
+              margin: EdgeInsets.only(bottom: 1.h, left: 4.w, right: 1.w),
               decoration: BoxDecoration(
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(15),

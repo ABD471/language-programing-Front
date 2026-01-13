@@ -19,4 +19,14 @@ class Address {
       latitude: json['latitude']?.toString() ?? '',
     );
   }
+
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'city': city,
+      'longitude': longitude,
+      'latitude': latitude,
+    };
+  }
 }

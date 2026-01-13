@@ -1,6 +1,7 @@
 import 'package:apartment_rental_system/api/apiService.dart';
 import 'package:apartment_rental_system/api/urlClient.dart';
 import 'package:apartment_rental_system/common/features/settings/controller/editlang_theme_controller.dart';
+import 'package:apartment_rental_system/features/tenant/favorite/controller/FavoriteController.dart';
 import 'package:apartment_rental_system/helper/const/requestType.dart';
 import 'package:apartment_rental_system/util/service/authservice.dart';
 import 'package:apartment_rental_system/util/service/notification_service.dart';
@@ -20,18 +21,17 @@ class LogoutController extends GetxController {
         type: RequestType.normal,
       );
     } catch (e) {
-      
       debugPrint("Logout API failed: $e");
     } finally {
       await AuthService.clearToken();
 
-      
       Get.deleteAll(force: true);
-      await Get.putAsync(() => NotificationService().init(), permanent: true);
+      await Get.putAsync(() => NotificationService().init());
       await Get.putAsync(
         () async => EditlangThemeController(),
         permanent: true,
       );
+      await Get.putAsync(() async => FavoriteController());
 
       Get.offAllNamed('/loginScreen');
       isLoading.value = false;
