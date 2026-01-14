@@ -1,4 +1,4 @@
-import 'package:apartment_rental_system/features/tenant/home/model/apartment.dart';
+
 
 enum BookingStatus { pending, confirmed, canceled }
 
@@ -31,20 +31,20 @@ class Booking {
       endDate: DateTime.parse(json['end_date']),
       apartment: json['apartment'] != null
           ? Apartment.fromJson(json['apartment'])
-          : existingApartment!, // استخدام الـ apartment الحالي إذا لم يرسل السيرفر
+          : existingApartment!, 
     );
   }
 
   static BookingStatus _statusFromString(String s) {
-    // التعديل هنا ليتوافق مع Enum قاعدة البيانات
+
     switch (s.toLowerCase()) {
       case 'pending':
       case 'modification_pending':
         return BookingStatus.pending;
 
       case 'confirmed':
-        return BookingStatus.confirmed; // تم الربط مع الحالة القادمة من السيرفر
-      case 'cancelled': // السيرفر يرسلها بـ LL كما في الـ Schema
+        return BookingStatus.confirmed; 
+      case 'cancelled':
       case 'canceled':
         return BookingStatus.canceled;
       default:

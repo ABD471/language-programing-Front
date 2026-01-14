@@ -12,7 +12,7 @@ class AuthMiddleware extends GetMiddleware {
       return const RouteSettings(name: "/loginScreen");
     }
 
-    return null; // مسموح بالدخول
+    return null; 
   }
 
   @override

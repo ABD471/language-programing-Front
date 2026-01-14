@@ -70,7 +70,7 @@ class _CostumfiledtextState extends State<Costumfiledtext>
             keyboardType: widget.keyboardType,
             focusNode: widget.focusNode,
 
-            // تطبيق الثيم على النص
+            
             style: textTheme.bodyLarge?.copyWith(fontSize: 15.sp),
 
             validator: (value) {
@@ -89,13 +89,13 @@ class _CostumfiledtextState extends State<Costumfiledtext>
               hintText: widget.hintText,
               hintStyle: textTheme.bodyMedium?.copyWith(fontSize: 14.sp),
 
-              // ------- Prefix Icon -------
+            
               prefixIcon: IconTheme(
                 data: theme.iconTheme.copyWith(size: 18.sp),
                 child: widget.prefixIcon,
               ),
 
-              // ------- Suffix Icon (optional) -------
+              
               suffixIcon: widget.suffixIcon != null
                   ? IconTheme(
                       data: theme.iconTheme.copyWith(size: 16.sp),
@@ -103,7 +103,7 @@ class _CostumfiledtextState extends State<Costumfiledtext>
                     )
                   : null,
 
-              // 🔥 الآن نستخدم الـ InputDecorationTheme من الثيم مباشرة
+             
             ).applyDefaults(theme.inputDecorationTheme),
           ),
         );

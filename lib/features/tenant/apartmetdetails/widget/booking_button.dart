@@ -10,8 +10,7 @@ class BookingButtonTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apt = controller.apartment;
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+ 
 
     return SafeArea(
       minimum: const EdgeInsets.all(12),

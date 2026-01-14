@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // ------------------ 🎨 الألوان ------------------
+
   static const Color primary = Color(0xFF1E88E5);
   static const Color primaryLight = Color(0xFF2196F3);
   static const Color primaryDark = Color(0xFF0D47A1);
@@ -19,7 +19,7 @@ class AppTheme {
   static const double borderRadius = 12;
   static const double cardRadius = 14;
 
-  // ------------------ Light Theme ------------------
+ 
   static ThemeData get lightTheme => ThemeData(
     brightness: Brightness.light,
     primaryColor: primary,

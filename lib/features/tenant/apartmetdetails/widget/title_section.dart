@@ -9,7 +9,7 @@ class TitleSectionTest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // استدعاء بيانات الثيم الحالية
+ 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 

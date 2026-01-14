@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:apartment_rental_system/common/features/Chat/model/messageModel.dart';
-import 'package:apartment_rental_system/common/features/Chat/controller/chat_box_controller.dart'; // تأكد من استيراد الكنترولر الأساسي
+import 'package:apartment_rental_system/common/features/Chat/controller/chat_box_controller.dart'; 
 import 'package:apartment_rental_system/util/service/pusherService.dart';
 import 'package:get/get.dart';
 import 'package:apartment_rental_system/api/apiService.dart';
@@ -41,12 +41,12 @@ class ChatController extends GetxController {
     }
   }
 
-  // 🛠 التعديل هنا: مسح العداد عند تهيئة قنوات البوشر
+  
   void setupChatStreams(int currentUserId, int receiverId) async {
     await _pusherService.connectPusher();
     await _pusherEventSubscription?.cancel();
 
-    // مسح العداد من القائمة الرئيسية فور الدخول
+    
     _resetUnreadCountInList(receiverId);
 
     _pusherEventSubscription = _pusherService.eventStream.listen((event) {
@@ -85,7 +85,7 @@ class ChatController extends GetxController {
     }
   }
 
-  // دالة مخصصة لمسح العداد في الكنترولر الرئيسي
+ 
   void _resetUnreadCountInList(int receiverId) {
     try {
       if (Get.isRegistered<ChatBoxController>()) {
@@ -133,7 +133,7 @@ class ChatController extends GetxController {
             newMessage.isMe = false;
             messages.add(newMessage);
             markMessagesAsRead(receiverId);
-            // بما أننا داخل المحادثة، نضمن بقاء العداد صفراً في القائمة الرئيسية
+         
             _resetUnreadCountInList(receiverId);
           }
         } else {
@@ -252,9 +252,9 @@ class ChatController extends GetxController {
           }).toList(),
         );
 
-        // بعد جلب الرسائل بنجاح، نخبر السيرفر أننا قرأناها
+       
         markMessagesAsRead(receiverId);
-        // وتصفير العداد في القائمة الرئيسية
+        
         _resetUnreadCountInList(receiverId);
       }
     } finally {

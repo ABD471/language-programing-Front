@@ -1,5 +1,5 @@
 import 'package:apartment_rental_system/features/tenant/apartmetdetails/controller/apartmentDetailsController.dart';
-import 'package:apartment_rental_system/theme/maintheme.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';

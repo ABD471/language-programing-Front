@@ -1,11 +1,11 @@
-import 'dart:convert'; // ضروري لتحويل البيانات
+import 'dart:convert'; 
 import 'package:apartment_rental_system/common/features/Notification/controller/notificationController.dart';
 import 'package:apartment_rental_system/util/service/authservice.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
-// دالة المعالجة في الخلفية يجب أن تكون خارج الكلاس
+
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
@@ -15,9 +15,9 @@ class NotificationService extends GetxService {
   final FlutterLocalNotificationsPlugin _localNotifications =
   FlutterLocalNotificationsPlugin();
 
-  // 1️⃣ تعريف قناة الحجوزات
+
   static const AndroidNotificationChannel _bookingChannel = AndroidNotificationChannel(
-    'booking_channel_v2', // الـ ID المستخدم في كود الحجز القديم
+    'booking_channel_v2', 
     'إشعارات الحجوزات',
     description: 'تنبيهات طلبات الحجز الجديدة وتحديثاتها',
     importance: Importance.max,
@@ -25,9 +25,9 @@ class NotificationService extends GetxService {
     enableVibration: true,
   );
 
-  // 2️⃣ تعريف قناة الدردشة (التي أضفتها في Laravel باسم chat_channel)
+ 
   static const AndroidNotificationChannel _chatChannel = AndroidNotificationChannel(
-    'chat_channel', // يجب أن يطابق ما أرسلته من السيرفر
+    'chat_channel', 
     'رسائل الدردشة',
     description: 'تنبيهات الرسائل الجديدة من المستخدمين',
     importance: Importance.max,
@@ -40,7 +40,7 @@ class NotificationService extends GetxService {
 
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    // 3️⃣ تسجيل القناتين في نظام أندرويد
+   
     final androidPlugin = _localNotifications.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
 
@@ -78,7 +78,7 @@ class NotificationService extends GetxService {
   void _handleForegroundMessage(RemoteMessage message) {
     RemoteNotification? notification = message.notification;
 
-    // منع ظهور إشعار منبثق إذا كان المستخدم داخل نفس المحادثة الآن
+ 
     if (message.data['type'] == 'chat') {
       if (Get.currentRoute == '/chatScreen' &&
           Get.arguments?['receiverId'].toString() == message.data['sender_id']) {
@@ -87,7 +87,7 @@ class NotificationService extends GetxService {
     }
 
     if (notification != null) {
-      // 4️⃣ اختيار القناة الصحيحة بناءً على نوع الإشعار
+    
       bool isChat = message.data['type'] == 'chat';
 
       _localNotifications.show(

@@ -24,7 +24,7 @@ class HomeTestController extends GetxController {
     await loadApartmentsFromServer();
   }
 
-  // ---------------- Load Apartments ----------------
+  
   Future<void> loadApartmentsFromServer() async {
     try {
       isLoading.value = true;

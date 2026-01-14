@@ -52,7 +52,7 @@ class _AnimatedAuthCardState extends State<AnimatedAuthCard>
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
-    // بدء الأنيميشن تلقائيًا
+    
     _controller.forward();
   }
 

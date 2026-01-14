@@ -1,5 +1,5 @@
 import 'package:apartment_rental_system/features/tenant/mybooking/controller/bookingDetailsController.dart';
-import 'package:apartment_rental_system/features/tenant/mybooking/widget/bookingSheet.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -18,20 +18,20 @@ class BookingDetailsScreen extends StatelessWidget {
         () => CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 30.h, // Resize: Height based on screen
+              expandedHeight: 30.h, 
               pinned: true,
               iconTheme: IconThemeData(
                 color: isDark ? Colors.white : Colors.black,
               ),
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  controller.apartment.title.tr, // Translation
+                  controller.apartment.title.tr, 
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 14.sp, // Resize
+                    fontSize: 14.sp, 
                   ),
                 ),
-                // خلفية الصورة (مثال)
+              
                 background: Image.network(
                   controller.apartment.imageUrl.isNotEmpty
                       ? controller.apartment.imageUrl
@@ -43,11 +43,11 @@ class BookingDetailsScreen extends StatelessWidget {
 
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.all(4.w), // Resize
+                padding: EdgeInsets.all(4.w), 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// حالة الحجز
+                   
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 3.w,
@@ -58,11 +58,11 @@ class BookingDetailsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        controller.booking.value.status.name.tr, // Translation
+                        controller.booking.value.status.name.tr, 
                         style: TextStyle(
                           color: controller.statusColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 10.sp, // Resize
+                          fontSize: 10.sp, 
                         ),
                       ),
                     ),
@@ -77,13 +77,13 @@ class BookingDetailsScreen extends StatelessWidget {
                           _iconInfo(
                             context,
                             Icons.calendar_today,
-                            'from_date'.tr, // Translation
+                            'from_date'.tr,
                             controller.startDate.toString().split(' ')[0],
                           ),
                           _iconInfo(
                             context,
                             Icons.calendar_month,
-                            'to_date'.tr, // Translation
+                            'to_date'.tr, 
                             controller.endDate.toString().split(' ')[0],
                           ),
                         ],
@@ -92,12 +92,12 @@ class BookingDetailsScreen extends StatelessWidget {
 
                     SizedBox(height: 2.h),
 
-                    /// تفاصيل الشقة
+                  
                     Text(
-                      'apartment_details'.tr, // Translation
+                      'apartment_details'.tr, 
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15.sp, // Resize
+                        fontSize: 15.sp, 
                       ),
                     ),
 
@@ -110,25 +110,25 @@ class BookingDetailsScreen extends StatelessWidget {
                           _infoRow(
                             context,
                             Icons.attach_money,
-                            'price'.tr, // Translation
+                            'price'.tr, 
                             '${controller.apartment.price} ${'currency'.tr}',
                           ),
                           _infoRow(
                             context,
                             Icons.bed,
-                            'bedrooms'.tr, // Translation
+                            'bedrooms'.tr,
                             controller.apartment.bedrooms.toString(),
                           ),
                           _infoRow(
                             context,
                             Icons.bathtub,
-                            'bathrooms'.tr, // Translation
+                            'bathrooms'.tr, 
                             controller.apartment.bathrooms.toString(),
                           ),
                           _infoRow(
                             context,
                             Icons.square_foot,
-                            'area'.tr, // Translation
+                            'area'.tr, 
                             '${controller.apartment.area} ${'sqm'.tr}',
                           ),
                         ],

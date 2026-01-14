@@ -7,7 +7,7 @@ class GradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // التحقق مما إذا كان النظام في الوضع الليلي
+   
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -17,14 +17,14 @@ class GradientBackground extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  const Color(0xFF0D47A1), // أزرق داكن جداً (Deep Blue)
-                  const Color(0xFF121212), // أسود مطفي (Material Dark)
-                  const Color(0xFF1E1E1E), // رمادي داكن جداً
+                  const Color(0xFF0D47A1), 
+                  const Color(0xFF121212), 
+                  const Color(0xFF1E1E1E),
                 ]
               : [
-                  const Color(0xFF1565C0), // أزرق (لونك الأصلي)
-                  const Color(0xFFF5F5F5), // أبيض رمادي
-                  const Color(0xFFEEEEEE), // رمادي أفتح
+                  const Color(0xFF1565C0), 
+                  const Color(0xFFF5F5F5), 
+                  const Color(0xFFEEEEEE),
                 ],
         ),
       ),

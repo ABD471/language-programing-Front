@@ -72,7 +72,7 @@ class BookingsController extends GetxController {
           margin: const EdgeInsets.all(15),
         );
       } else {
-        // رسالة خطأ في حال فشل الـ API
+   
         _showErrorSnackbar(result['message'] ?? 'فشل إلغاء الحجز');
       }
     } catch (e) {
@@ -83,7 +83,7 @@ class BookingsController extends GetxController {
     }
   }
 
-  // دالة مساعدة لإظهار أخطاء الـ Snackbar
+ 
   void _showErrorSnackbar(String message) {
     Get.snackbar(
       'خطأ',
@@ -95,7 +95,7 @@ class BookingsController extends GetxController {
     );
   }
 
-  // إرسال التقييم إلى السيرفر
+
   Future<void> submitEvaluation({
     required int apartmentId,
     required double rating,

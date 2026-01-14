@@ -46,7 +46,7 @@ class VerifyOtpEmailController extends GetxController {
 
   // ========== OTP FIELD HANDLING ==========
   void onOtpChanged(String value, int index) {
-    // حذف القيمة
+   
     if (value.isEmpty) {
       controllers[index].clear();
 

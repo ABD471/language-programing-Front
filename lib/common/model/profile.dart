@@ -5,7 +5,7 @@ class Profile {
   String lastName;
   DateTime dateOfBirth;
 
-  Uint8List? profileImageBytes; // الصورة المحملة فعلياً
+  Uint8List? profileImageBytes; 
 
   Profile({
     required this.firstName,

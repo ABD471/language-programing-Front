@@ -24,7 +24,7 @@ class EditProfilePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent, // تم التعديل ليتناسب مع الخلفية
+          backgroundColor: Colors.transparent, 
           centerTitle: true,
           elevation: 0,
           title: Text(

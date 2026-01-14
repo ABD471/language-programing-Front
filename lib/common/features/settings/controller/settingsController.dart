@@ -27,7 +27,7 @@ class SettingsControllerImpl extends SettingsController {
     Get.toNamed("/authPasswordRequierdPage", arguments: {"next": routeName});
   }
 
-  // -------------------- Overrides --------------------
+
   @override
   void changePassword() {
     _navigateWithAuth("/editPasswordPage");

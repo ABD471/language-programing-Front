@@ -10,11 +10,11 @@ class Loading extends StatelessWidget {
     return Container(
       child: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // يجعل الأعمدة تملأ ما يلزم فقط
+          mainAxisSize: MainAxisSize.min, 
           children: [
-            // اللوتي الأولى
+           
             SizedBox(
-              height: 30.h, // اضبط القيم لتناسب شاشتك
+              height: 30.h, 
               width: 40.w,
               child: Lottie.asset(
                 'assets/lottie/HomeIconLoading.json',
@@ -22,10 +22,10 @@ class Loading extends StatelessWidget {
               ),
             ),
 
-            // لا فراغ: height = 0 يضمن وجودهما مباشرة فوق بعض
+            
             SizedBox(height: 0),
 
-            // اللوتي الثانية
+           
             SizedBox(
               height: 10.h,
               width: 40.w,

@@ -14,13 +14,13 @@ class BookingDetailsController extends GetxController {
     booking = initialBooking.obs;
   }
 
-  /// اختصار للوصول
+  
   Apartment get apartment => booking.value.apartment;
 
   DateTime get startDate => booking.value.startDate;
   DateTime get endDate => booking.value.endDate;
 
-  /// لون الحالة
+  
   Color get statusColor {
     switch (booking.value.status.name) {
       case 'approved':
@@ -56,7 +56,7 @@ class BookingDetailsController extends GetxController {
   }
 
   Future<void> cancelBooking() async {
-    // أولًا نعرض رسالة تأكيد
+    
     Get.defaultDialog(
       title: 'تأكيد الإلغاء',
       middleText: 'هل أنت متأكد من إلغاء الحجز؟',
@@ -65,7 +65,7 @@ class BookingDetailsController extends GetxController {
       confirmTextColor: Colors.white,
       buttonColor: Colors.red,
       onConfirm: () async {
-        Get.back(); // إغلاق الديالوج
+        Get.back(); 
 
         isLoading.value = true;
         try {
@@ -94,7 +94,7 @@ class BookingDetailsController extends GetxController {
               margin: const EdgeInsets.all(15),
             );
           } else {
-            // رسالة خطأ في حال فشل الـ API
+           
             _showErrorSnackbar(result['message'] ?? 'فشل إلغاء الحجز');
           }
         } catch (e) {
@@ -107,7 +107,7 @@ class BookingDetailsController extends GetxController {
     );
   }
 
-  // دالة مساعدة لإظهار أخطاء الـ Snackbar
+
   void _showErrorSnackbar(String message) {
     Get.snackbar(
       'خطأ',
@@ -119,7 +119,6 @@ class BookingDetailsController extends GetxController {
     );
   }
 
-  /// حفظ التعديل
 
   Future<void> updateBooking() async {
     isLoading.value = true;
@@ -138,10 +137,10 @@ class BookingDetailsController extends GetxController {
       );
 
       if (result["body"]['status'] == 1 && result["statusCode"] == 202) {
-        // إذا كان هناك تعديل في انتظار الموافقة (Tenant)
+    
         final message = result["body"]['message'] ?? 'تم تعديل الحجز بنجاح';
 
-        // تحديث بيانات الحجز محليًا
+      
         if (result["body"]['data'] != null) {
           booking.value = Booking.fromJson(
             result["body"]['data'],
@@ -149,7 +148,7 @@ class BookingDetailsController extends GetxController {
           );
         }
 
-        Get.back(); // إغلاق الـ BottomSheet
+        Get.back();
         Get.snackbar(
           'نجاح',
           message,
@@ -160,7 +159,7 @@ class BookingDetailsController extends GetxController {
           margin: const EdgeInsets.all(15),
         );
       } else {
-        // رسالة خطأ من السيرفر
+       
         _showErrorSnackbar(result['message'] ?? 'فشل تعديل الحجز');
       }
     } catch (e) {

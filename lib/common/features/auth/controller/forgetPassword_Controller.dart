@@ -34,7 +34,7 @@ class ForgetpasswordController extends GetxController {
       final statusCode = result["statusCode"];
       final body = result["body"];
 
-      // الحالة 200 نجاح
+      
       if (statusCode == 200 && body["status"] == 1) {
         final Map<String, String> arg = {
           "phone": phone.text,
@@ -51,7 +51,7 @@ class ForgetpasswordController extends GetxController {
         return;
       }
 
-      // الحالة 404 المستخدم غير موجود
+    
       if (statusCode == 404) {
         showDialogWithLottie(
           title: "dialog_error_title".tr,
@@ -61,7 +61,7 @@ class ForgetpasswordController extends GetxController {
         return;
       }
 
-      // الحالة 422 — مشاكل في التحقق
+    
       if (statusCode == 422 && body["errors"] != null) {
         final errors = body["errors"];
 
@@ -86,7 +86,7 @@ class ForgetpasswordController extends GetxController {
         }
       }
 
-      // حالة غير متوقعة
+     
       showDialogWithLottie(
         title: "dialog_unexpected_title".tr,
         message: "dialog_unexpected_code".tr + " $statusCode",

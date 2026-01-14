@@ -7,7 +7,7 @@ class DescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على بيانات الثيم الحالية
+   
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 

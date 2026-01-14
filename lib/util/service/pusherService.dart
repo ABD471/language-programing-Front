@@ -42,20 +42,18 @@ class PusherService {
           }
         },
 
-        // 🛠 التعديل الجوهري هنا: تحديث القائمة عند دخول مستخدم جديد
         onMemberAdded: (channelName, member) {
           print("👤 Member Added: ${member.userId}");
           if (!activeUsers.contains(member.userId.toString())) {
             activeUsers.add(member.userId.toString());
-            _onlineUsersController.add(List.from(activeUsers)); // إرسال التحديث للـ Stream
+            _onlineUsersController.add(List.from(activeUsers));
           }
         },
 
-        // 🛠 التعديل الجوهري هنا: تحديث القائمة عند خروج مستخدم
         onMemberRemoved: (channelName, member) {
           print("🚫 Member Removed: ${member.userId}");
           activeUsers.remove(member.userId.toString());
-          _onlineUsersController.add(List.from(activeUsers)); // إرسال التحديث للـ Stream
+          _onlineUsersController.add(List.from(activeUsers));
         },
 
         onError: (message, code, error) {
@@ -78,7 +76,11 @@ class PusherService {
     }
   }
 
-  Future<dynamic> _onAuthorizer(String channelName, String socketId, dynamic options) async {
+  Future<dynamic> _onAuthorizer(
+    String channelName,
+    String socketId,
+    dynamic options,
+  ) async {
     try {
       var response = await http.post(
         Uri.parse("$serverurl/broadcasting/auth"),
@@ -88,10 +90,7 @@ class PusherService {
           'Accept': 'application/json',
           'X-Socket-ID': socketId,
         },
-        body: jsonEncode({
-          'socket_id': socketId,
-          'channel_name': channelName,
-        }),
+        body: jsonEncode({'socket_id': socketId, 'channel_name': channelName}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -106,7 +105,7 @@ class PusherService {
   void _handlePresenceUpdate(dynamic data) {
     try {
       final decoded = data is String ? jsonDecode(data) : data;
-      // تأكد من مسار البيانات القادم من Laravel/Pusher
+
       if (decoded['presence']?['ids'] != null) {
         activeUsers = List<String>.from(
           decoded['presence']['ids'].map((id) => id.toString()),

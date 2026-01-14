@@ -20,11 +20,11 @@ class ChatBoxController extends GetxController {
   }
 
   void _initializeController() async {
-    // 1. جلب القائمة أولاً
+  
     await getChatList();
-    // 2. الاستماع لتحديثات الأونلاين (الـ Stream)
+    
     _listenToOnlineStatus();
-    // 3. ربط Pusher والاشتراك في القنوات
+   
     _listenToPusherUpdates();
   }
 
@@ -33,7 +33,7 @@ class ChatBoxController extends GetxController {
       print("👥 Received online users list: $users");
       onlineUserIds.assignAll(users);
 
-      // تحديث حالة كل محادثة بناءً على القائمة الجديدة
+      
       for (var chat in conversations) {
         if (chat.otherUser != null) {
           String otherId = chat.otherUser!['id'].toString();
@@ -51,11 +51,11 @@ class ChatBoxController extends GetxController {
 
     await _pusherService.connectPusher();
 
-    // 🔵 القناة الخاصة بالرسائل
+    
     await _pusherService.subscribeToChannel("private-chat.$currentUserId");
 
-    // 🟢 التعديل المهم: الاشتراك في قناة الـ Presence لمراقبة المتصلين
-    // ملاحظة: تأكد أن اسم القناة يطابق ما هو موجود في Laravel (مثلاً chat-online)
+    
+   
     await _pusherService.subscribeToChannel("presence-chatonline.$currentUserId");
 
     _pusherService.eventStream.listen((event) {
@@ -103,7 +103,7 @@ class ChatBoxController extends GetxController {
       conversations.insert(0, chat);
       conversations.refresh();
     } else {
-      // إذا كانت محادثة جديدة تماماً، نحدث القائمة من السيرفر
+     
       getChatList();
     }
   }
@@ -119,7 +119,7 @@ class ChatBoxController extends GetxController {
         List data = response['body']["body"];
         var fetchedChats = data.map((e) => MessageModel.fromJson(e)).toList();
 
-        // فحص الحالة الابتدائية عند جلب القائمة
+      
         for (var chat in fetchedChats) {
           if (chat.otherUser != null) {
             chat.isOnline = onlineUserIds.contains(

@@ -213,7 +213,7 @@ class _BookingCardState extends State<BookingCard> {
     );
   }
 
-  // ويدجت لعرض المعلومات بخط عريض
+
   Widget _buildInfoSection(
     BuildContext context,
     IconData icon,
@@ -223,13 +223,13 @@ class _BookingCardState extends State<BookingCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Icon(icon, size: 22.sp, color: color), // أيقونة كبيرة
+        Icon(icon, size: 22.sp, color: color), 
         SizedBox(width: 3.w),
         Text(
           text,
           style: TextStyle(
             color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-            fontSize: 16.sp, // خط المعلومات كبير
+            fontSize: 16.sp, 
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -254,7 +254,7 @@ class _BookingCardState extends State<BookingCard> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
           vertical: 1.8.h,
-        ), // زيادة الارتفاع للأزرار
+        ), 
         decoration: BoxDecoration(
           color: isLoading
               ? (isDark ? Colors.grey.shade800 : Colors.grey.shade300)
@@ -286,7 +286,7 @@ class _BookingCardState extends State<BookingCard> {
                 style: TextStyle(
                   color: isPrimary ? Colors.white : color,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.sp, // خط الأزرار واضح
+                  fontSize: 15.sp, 
                 ),
               ),
             ],

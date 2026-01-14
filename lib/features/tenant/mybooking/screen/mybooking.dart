@@ -1,5 +1,5 @@
 import 'package:apartment_rental_system/common/widget/gradientbackground.dart';
-import 'package:apartment_rental_system/main.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';

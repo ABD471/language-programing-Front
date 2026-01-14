@@ -48,7 +48,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
               backgroundColor: isDark ? Colors.black54 : Colors.white70,
               child: IconButton(
                 icon: const Icon(Icons.share_outlined),
-                onPressed: () {}, // منطق المشاركة
+                onPressed: () {}, 
                 color: isDark ? Colors.white : Colors.black,
               ),
             ),
@@ -59,12 +59,12 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
         controller: ctrl.scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // عرض الصور في الجزء العلوي
+         
           SliverToBoxAdapter(child: HeaderImageCarouselTest(controller: ctrl)),
 
           SliverToBoxAdapter(
             child: Container(
-              // سحب الحاوية للأعلى قليلاً لتتداخل مع الصور (Modern Look)
+             
               transform: Matrix4.translationValues(0, -20, 0),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
@@ -77,7 +77,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // العنوان والسعر والتقييم
+                  
                     TitleSectionTest(apartment: apartment),
 
                     const Padding(
@@ -85,7 +85,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
                       child: Divider(thickness: 0.5),
                     ),
 
-                    // الوصف
+                  
                     Text(
                       'عن هذه الشقة',
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -97,7 +97,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    // المرافق (التجهيزات)
+                  
                     Text(
                       'ما الذي توفره الشقة؟',
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -109,12 +109,12 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    // كارت التواصل مع صاحب العقار
+                    
                     ContactCardTest(controller: ctrl),
 
                     const SizedBox(height: 24),
 
-                    // معاينة الموقع
+                    
                     Text(
                       'الموقع الجغرافي',
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -124,7 +124,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
                     const SizedBox(height: 12),
                     MapPreviewTest(controller: ctrl),
 
-                    // مساحة إضافية للزر السفلي
+                  
                     const SizedBox(height: 120),
                   ],
                 ),
@@ -133,7 +133,7 @@ class ApartmentDetailsScreenTest extends StatelessWidget {
           ),
         ],
       ),
-      // زر الحجز السفلي مثبت دائماً
+     
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

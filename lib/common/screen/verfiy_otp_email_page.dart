@@ -92,7 +92,6 @@ class VerfiyOtpEmailPage extends StatelessWidget {
 
                         SizedBox(height: 5.h),
 
-                        // --- زر التحقق ---
                         Obx(
                           () => SizedBox(
                             width: double.infinity,

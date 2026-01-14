@@ -44,7 +44,7 @@ class NewpasswordController extends GetxController {
       final statusCode = result["statusCode"];
       final body = result["body"];
 
-      // ----------- 🔥 حالة النجاح 200 ------------
+      // ----------- حالة النجاح 200 ------------
       if (statusCode == 200 && body["status"] == 1) {
         Get.offAllNamed("/loginScreen");
 
@@ -56,7 +56,7 @@ class NewpasswordController extends GetxController {
         return;
       }
 
-      // ----------- ❗ حالة 422: مشاكل الفاليديشن ------------
+      // -----------  حالة 422: مشاكل الفاليديشن ------------
       if (statusCode == 422) {
         String errorMessage = "newpass_validation_error".tr;
 
@@ -78,7 +78,7 @@ class NewpasswordController extends GetxController {
         return;
       }
 
-      // ----------- ❗ حالات غير متوقعة -----------
+      // -----------  حالات غير متوقعة -----------
       showDialogWithLottie(
         title: "dialog_unexpected_title".tr,
         message: "newpass_unexpected_message".trParams({
@@ -87,7 +87,7 @@ class NewpasswordController extends GetxController {
         lottieAsset: "assets/lottie/Alert.json",
       );
     } catch (e) {
-      // ----------- ❗ استثناء -----------
+      // -----------  استثناء -----------
       showDialogWithLottie(
         title: "dialog_exception_title".tr,
         message: "dialog_exception_message".trParams({"error": e.toString()}),

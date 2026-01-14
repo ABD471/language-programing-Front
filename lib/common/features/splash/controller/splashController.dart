@@ -19,13 +19,13 @@ class SplashController extends GetxController {
     try {
       hasError.value = false;
 
-      // ⛔ فحص إنترنت فعلي
+      // فحص إنترنت فعلي
       final hasInternet = await hasRealInternet();
       if (!hasInternet) {
         throw Exception("NO_INTERNET");
       }
 
-      // 2️⃣ تشغيل المهام معًا + Timeout شامل
+      // تشغيل المهام معًا 
       await Future.wait([
         minSplash,
         AuthService.loadToken(),
@@ -39,7 +39,7 @@ class SplashController extends GetxController {
         onTimeout: () => throw TimeoutException("TIMEOUT"),
       );
 
-      // 3️⃣ التوجيه
+      //  التوجيه
       final hasSeenOnboarding =
           sharedPreferences.getBool('onboarding_seen') ?? false;
 
